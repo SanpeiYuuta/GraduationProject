@@ -13,7 +13,7 @@ public class PlayerAvatar : NetworkBehaviour
     // プレイヤー名のネットワークプロパティを定義する
     [Networked] public NetworkString<_16> NickName { get; set; } // プレイヤー名のネットワークプロパティ
 
-    [SerializeField] GameObject m_test;
+    [SerializeField] GameObject m_bullet; // テスト用の魔弾のプレハブを入れておく
 
     //private NetworkCharacterController m_characterController; // キャラクターコントローラー
     private NetworkMecanimAnimator m_animator; // アニメーター
@@ -26,8 +26,12 @@ public class PlayerAvatar : NetworkBehaviour
     private InputAction m_moveAction;
     private InputAction m_jumpAction;
     private InputAction m_dashAction;
+    private InputAction m_attackAction;
 
     GameObject m_camera;
+
+    // 攻撃用のステートマシン
+    private StateMachineShot m_stateMachineAttack;
 
     // これがフォトンのビヘイビアにとってのStart()
     public override void Spawned()
@@ -41,6 +45,7 @@ public class PlayerAvatar : NetworkBehaviour
         m_moveAction = InputSystem.actions.FindAction("Move");
         m_jumpAction = InputSystem.actions.FindAction("Jump");
         m_dashAction = InputSystem.actions.FindAction("Dash");
+        m_attackAction = InputSystem.actions.FindAction("Attack");
 
         // ↓これはInputSystemのアクションマップを使用しない場合の例
         // 直接コードでアクションを書くときはこうなる
@@ -62,6 +67,8 @@ public class PlayerAvatar : NetworkBehaviour
         var view = GetComponent<PlayerAvatarView>();
         view.SetNickName(NickName.Value);
 
+        // 攻撃用のステートマシン作成
+        m_stateMachineAttack = new StateMachineShot(Object, m_bullet);
 
     }
 
@@ -80,7 +87,7 @@ public class PlayerAvatar : NetworkBehaviour
             return;
         }
 
-        float delta = Time.deltaTime;
+        float delta = Runner.DeltaTime; // ネットワークのデルタタイムを使用する
 
         // 移動
         float cameraAngle = m_camera.GetComponent<CameraMove>().GetAngle(); // カメラの角度を渡す
@@ -127,6 +134,20 @@ public class PlayerAvatar : NetworkBehaviour
         //animator.SetBool("Grounded", grounded);
         //animator.SetBool("FreeFall", !grounded && vy < -4.0f);
         animator.SetFloat("MotionSpeed", 1.0f);
+
+        // ステートマシンの更新
+        m_stateMachineAttack.OnUpdate();
+
+        //// 攻撃
+        //if (m_attackAction.IsPressed())
+        //{
+        //    // 攻撃の球を発射する
+        //    //var bullet = Runner.Spawn(m_bullet, transform.position + transform.forward * 1.0f + new Vector3(0.0f, 1.0f, 0.0f), transform.rotation);
+
+        //}
+
+        PlayerRef playerRef = Object.InputAuthority; // このオブジェクトのプレイヤーリファレンスを取得
+        var a = Object.GetComponent<Transform>();
     }
 
 

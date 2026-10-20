@@ -35,6 +35,7 @@ public class PlayerDamege : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
+
         Debug.Log("プレイヤーはトリガーに当たり続けているよ");
     }
 
