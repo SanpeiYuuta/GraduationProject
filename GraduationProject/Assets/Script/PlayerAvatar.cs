@@ -15,8 +15,10 @@ public class PlayerAvatar : NetworkBehaviour
 
     [SerializeField] GameObject m_test;
 
-    private NetworkCharacterController m_characterController; // キャラクターコントローラー
+    //private NetworkCharacterController m_characterController; // キャラクターコントローラー
     private NetworkMecanimAnimator m_animator; // アニメーター
+
+    private Vector3 m_startPos; // 初期位置
 
     private float m_speed = 3.0f;
 
@@ -30,7 +32,9 @@ public class PlayerAvatar : NetworkBehaviour
     // これがフォトンのビヘイビアにとってのStart()
     public override void Spawned()
     {
-        m_characterController = GetComponent<NetworkCharacterController>();
+        m_startPos = transform.position; // 初期位置を保存
+
+        //m_characterController = GetComponent<NetworkCharacterController>();
         m_animator = GetComponent<NetworkMecanimAnimator>();
 
         // MoveとJumpのアクションを取得
@@ -45,6 +49,10 @@ public class PlayerAvatar : NetworkBehaviour
 
         // カメラを取得
         m_camera = GameObject.Find("Camera");
+        // HPUIに対し自分を渡す
+        var hpUI = GameObject.Find("PlayerHPUI");
+        hpUI.GetComponent<UIPlayerHP>().SetPlayer(gameObject);
+
         //if (m_camera != null)
         //{
         //    m_camera.GetComponent<CameraMove>().SetOriginObject(gameObject);
@@ -65,8 +73,10 @@ public class PlayerAvatar : NetworkBehaviour
         // 体力0になった時の処理
         if (m_hp <= 0)
         {
-            Transform model = transform.Find("Armature");
-            model.gameObject.SetActive(false); // モデルを非表示にする(更新もしない)
+            transform.position = m_startPos; // リスポーン位置に移動
+            m_hp = m_maxHp; // HPを回復
+            //Transform model = transform.Find("Armature");
+            //model.gameObject.SetActive(false); // モデルを非表示にする(更新もしない)
             return;
         }
 
@@ -104,18 +114,18 @@ public class PlayerAvatar : NetworkBehaviour
         // ジャンプ
         if (m_jumpAction.IsPressed())
         {
-            m_characterController.Jump();
+            //m_characterController.Jump();
         }
 
         // アニメーション
         var animator = m_animator.Animator;
-        var grounded = m_characterController.Grounded;
-        var vy = m_characterController.Velocity.y;
+        //var grounded = m_characterController.Grounded;
+        //var vy = m_characterController.Velocity.y;
         Vector2 animationMove = new Vector2(move.x, move.z);
         animator.SetFloat("Speed", animationMove.magnitude * 50.0f);
-        animator.SetBool("Jump", !grounded && vy > 4.0f);
-        animator.SetBool("Grounded", grounded);
-        animator.SetBool("FreeFall", !grounded && vy < -4.0f);
+        //animator.SetBool("Jump", !grounded && vy > 4.0f);
+        //animator.SetBool("Grounded", grounded);
+        //animator.SetBool("FreeFall", !grounded && vy < -4.0f);
         animator.SetFloat("MotionSpeed", 1.0f);
     }
 
