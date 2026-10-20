@@ -49,6 +49,10 @@ public class PlayerAvatar : NetworkBehaviour
 
         // ƒJƒƒ‰‚ğæ“¾
         m_camera = GameObject.Find("Camera");
+        // HPUI‚É‘Î‚µ©•ª‚ğ“n‚·
+        var hpUI = GameObject.Find("PlayerHPUI");
+        hpUI.GetComponent<UIPlayerHP>().SetPlayer(gameObject);
+
         //if (m_camera != null)
         //{
         //    m_camera.GetComponent<CameraMove>().SetOriginObject(gameObject);
