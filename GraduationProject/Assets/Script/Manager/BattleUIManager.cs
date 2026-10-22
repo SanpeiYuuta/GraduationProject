@@ -20,7 +20,12 @@ public class BattleUIManager : MonoBehaviour
     void Update()
     {
         // ゲームのフェーズを取得する
-        var gameManager = GameObject.Find("GameBattleManager").GetComponent<GameBattleManager>();
+        var gameManager = GameObject.Find("GameBattleManager(Clone)").GetComponent<GameBattleManager>();
+
+        if (!gameManager)
+        {
+            Debug.Log("とおらない");
+        }
         m_gamePhase = gameManager.GetGamePhase();
         //Debug.Log($"ゲームフェーズは{m_gamePhase}です。");
 

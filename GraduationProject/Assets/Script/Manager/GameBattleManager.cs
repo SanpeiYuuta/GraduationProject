@@ -18,7 +18,7 @@ public enum E_GamePhase
     End, // ゲーム終了時のフェーズ(ここで終了処理)
 }
 
-public class GameBattleManager : MonoBehaviour
+public class GameBattleManager : NetworkBehaviour
 {
 
     [SerializeField] int m_maxPlayerNum = 2; // 最大プレイヤー数
@@ -34,15 +34,25 @@ public class GameBattleManager : MonoBehaviour
     private E_GamePhase m_gamePhase = E_GamePhase.None; // ゲームのフェーズ
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public override void Spawned()
     {
         m_gamePhase = E_GamePhase.Preparation; // ゲームフェーズを準備にする
+        Debug.Log("ゲームフェーズは準備です。");
     }
 
     // Update is called once per frame
-    void Update()
+    public override void FixedUpdateNetwork()
     {
-        Debug.Log($"ゲームフェーズは{m_gamePhase}です。");
+        if (Object.HasStateAuthority)
+        {
+            Debug.Log("自分が StateAuthority を持っています");
+        }
+        else
+        {
+            Debug.Log("自分は StateAuthority を持っていません");
+        }
+
+        //Debug.Log($"ゲームフェーズは{m_gamePhase}です。");
 
         // 戦闘人数に満たしていない時は処理しない
         if (m_playerObjects.Count < m_maxPlayerNum) return;

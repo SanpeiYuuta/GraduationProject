@@ -33,6 +33,9 @@ public class PlayerAvatar : NetworkBehaviour
     // 攻撃用のステートマシン
     private StateMachineShot m_stateMachineAttack;
 
+    // バトルマネージャー
+    [SerializeField] private GameBattleManager m_battleManager;
+
     // これがフォトンのビヘイビアにとってのStart()
     public override void Spawned()
     {
@@ -59,8 +62,30 @@ public class PlayerAvatar : NetworkBehaviour
         hpUI.GetComponent<UIPlayerHP>().SetPlayer(gameObject);
 
         // バトルマネージャーに自分を渡す
-        var battleManager = GameObject.Find("GameBattleManager");
-        battleManager.GetComponent<GameBattleManager>().SetPlayer(Object);
+        var battleManagerObj = GameObject.Find("GameBattleManager(Clone)");
+        GameBattleManager battleManager = new GameBattleManager();
+        //Debug.Log("バトルマネージャーのStateAuthorityは" + batteleManagerStateAuthorty);
+
+        if (!battleManagerObj)
+        {
+            var test = Runner.Spawn(m_battleManager, new Vector3(0.0f, 0.0f, 0.0f), Quaternion.identity); // バトルマネージャーを生成
+            battleManager = test.GetComponent<GameBattleManager>();
+        }
+        else if(battleManagerObj)
+        {
+            battleManager = battleManagerObj.GetComponent<GameBattleManager>();
+        }
+
+        battleManager.SetPlayer(Object);
+
+
+        //var batteleManagerStateAuthorty = ba.GetComponent<NetworkObject>().StateAuthority;
+        //Debug.Log("バトルマネージャーのStateAuthorityは" + batteleManagerStateAuthorty);
+
+        //if (batteleManagerStateAuthorty == PlayerRef.None)
+        //{
+        //    battleManager.GetComponent<NetworkObject>().RequestStateAuthority(); // StateAuthorityを要求する
+        //}
 
         // プレイヤー名をテキストに反映させる
         var view = GetComponent<PlayerAvatarView>();
@@ -68,6 +93,7 @@ public class PlayerAvatar : NetworkBehaviour
 
         // 攻撃用のステートマシン作成
         m_stateMachineAttack = new StateMachineShot(Object, m_bullet);
+
 
     }
 
