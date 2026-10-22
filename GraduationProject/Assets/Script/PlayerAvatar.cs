@@ -58,10 +58,9 @@ public class PlayerAvatar : NetworkBehaviour
         var hpUI = GameObject.Find("PlayerHPUI");
         hpUI.GetComponent<UIPlayerHP>().SetPlayer(gameObject);
 
-        //if (m_camera != null)
-        //{
-        //    m_camera.GetComponent<CameraMove>().SetOriginObject(gameObject);
-        //}
+        // バトルマネージャーに自分を渡す
+        var battleManager = GameObject.Find("GameBattleManager");
+        battleManager.GetComponent<GameBattleManager>().SetPlayer(Object);
 
         // プレイヤー名をテキストに反映させる
         var view = GetComponent<PlayerAvatarView>();

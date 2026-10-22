@@ -36,7 +36,9 @@ public class MagicBullet : NetworkBehaviour
     // Update is called once per frame
     public override void FixedUpdateNetwork()
     {
-        if(m_parentObj != m_beforparentObj)
+        float delta = Runner.DeltaTime;
+
+        if (m_parentObj != m_beforparentObj)
         {
             if (m_parentObj)
             {
@@ -63,8 +65,6 @@ public class MagicBullet : NetworkBehaviour
             return;
             //NetworkRunner.Despawn();
         }
-
-        float delta = Runner.DeltaTime;
 
         // ˆÚ“®
         m_moveVec = m_directionVec * m_speed * delta;

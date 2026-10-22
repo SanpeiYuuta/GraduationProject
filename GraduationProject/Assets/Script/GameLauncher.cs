@@ -22,7 +22,13 @@ public class GameLauncher : MonoBehaviour,INetworkRunnerCallbacks
         networkRunner.AddCallbacks(this);
 
         // 共有モードのセッションに参加する
-        var result = await networkRunner.StartGame(new StartGameArgs { GameMode = GameMode.Shared });
+        var startGameArgs = new StartGameArgs
+        {
+            GameMode = GameMode.Shared,
+            PlayerCount = 2,
+            //SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
+        };
+        var result = await networkRunner.StartGame(startGameArgs);
 
         // 結果をデバックログに出す
         Debug.Log(result);
