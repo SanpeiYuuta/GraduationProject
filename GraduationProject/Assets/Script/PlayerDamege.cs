@@ -17,26 +17,26 @@ public class PlayerDamege : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("プレイヤーのトリガーに入ったよ");
-        // トリガーに入ったオブジェクトがプレイヤーかどうかを判定
-        if (other.gameObject.tag == "DamageObj")
-        {
-            // プレイヤーにダメージを与える処理をここに追加
-            var player = GetComponent<PlayerAvatar>();
-            player.HP -= 1; // HPを1減らす
-            Debug.Log(player.HP);
-        }
+        //Debug.Log("プレイヤーのトリガーに入ったよ");
+        //// トリガーに入ったオブジェクトがプレイヤーかどうかを判定
+        //if (other.gameObject.tag == "DamageObj")
+        //{
+        //    // プレイヤーにダメージを与える処理をここに追加
+        //    var player = GetComponent<PlayerAvatar>();
+        //    player.HP -= 1; // HPを1減らす
+        //    Debug.Log(player.HP);
+        //}
     }
 
     private void OnTriggerExit(Collider other)
     {
-        Debug.Log("プレイヤーのトリガーから出たよ");
+        //Debug.Log("プレイヤーのトリガーから出たよ");
     }
 
     private void OnTriggerStay(Collider other)
     {
 
-        Debug.Log("プレイヤーはトリガーに当たり続けているよ");
+        //Debug.Log("プレイヤーはトリガーに当たり続けているよ");
     }
 
 

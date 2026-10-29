@@ -46,6 +46,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameBattleManager
   m_maxPlayerNum: 2
+  m_maxStartTextTime: 3
+  m_maxBattleEndTextTime: 3
+  m_maxResultTextTime: 3
+  m_textMeshPro: {fileID: 0}
 --- !u!114 &3351931706376992798
 MonoBehaviour:
   m_ObjectHideFlags: 0

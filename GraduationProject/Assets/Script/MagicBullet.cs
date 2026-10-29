@@ -78,4 +78,20 @@ public class MagicBullet : NetworkBehaviour
     {
         m_parentObj = obj;
     }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        Debug.Log("球がプレイヤーのトリガーに入ったよ");
+        // トリガーに入ったオブジェクトがプレイヤーかどうかを判定
+        if (other.gameObject.tag == "Player")
+        {
+            // プレイヤーにダメージを与える処理をここに追加
+            var player = other.gameObject.GetComponent<PlayerAvatar>();
+            //player.DamegeRpc(1);
+            //player.m_hp -= 1; // HPを1減らす
+            player.HP -= 1;
+            //Debug.Log(player.HP);
+        }
+    }
+
 }
