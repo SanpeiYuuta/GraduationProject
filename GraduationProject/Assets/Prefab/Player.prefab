@@ -200,6 +200,7 @@ GameObject:
   - component: {fileID: -4471572313537560038}
   - component: {fileID: 5886200706478569195}
   - component: {fileID: 9043435450391048198}
+  - component: {fileID: -6821812751232182290}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -360,7 +361,8 @@ MonoBehaviour:
     _length: 0
     _data:
       Data: 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000u
-  m_test: {fileID: 0}
+  m_bullet: {fileID: 7682189365732347471, guid: b43441e57057e5a438d14da178b20494, type: 3}
+  m_battleManager: {fileID: 3891885126159553382, guid: 21fb16be2980e4b409df1619baec651a, type: 3}
 --- !u!114 &527752138264219806
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -411,7 +413,7 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 4
   m_CollisionDetection: 0
 --- !u!114 &9043435450391048198
 MonoBehaviour:
@@ -454,6 +456,18 @@ MonoBehaviour:
     MinImpactfulCollisionAlignment: 0.3
     ImpactStartCorrectionTime: 0.1
     ImpactCorrectionTimeComplete: 0.3
+--- !u!114 &-6821812751232182290
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4063018937512179904}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc7f24cd8cb06884cbfb746b9dba7f86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Player
 --- !u!1001 &3777074459245723855
 PrefabInstance:
   m_ObjectHideFlags: 0

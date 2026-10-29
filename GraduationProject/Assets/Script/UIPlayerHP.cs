@@ -1,6 +1,8 @@
 using TMPro;
 using UnityEngine;
-
+/// <summary>
+/// プレイヤーのHPを表示するUI
+/// </summary>
 public class UIPlayerHP : MonoBehaviour
 {
     private GameObject m_player; // プレイヤー

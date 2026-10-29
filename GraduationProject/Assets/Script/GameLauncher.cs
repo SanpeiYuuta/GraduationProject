@@ -5,6 +5,7 @@ using Fusion.Sockets;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using static Unity.Collections.Unicode;
 
 public class GameLauncher : MonoBehaviour,INetworkRunnerCallbacks
 {
@@ -22,7 +23,13 @@ public class GameLauncher : MonoBehaviour,INetworkRunnerCallbacks
         networkRunner.AddCallbacks(this);
 
         // 共有モードのセッションに参加する
-        var result = await networkRunner.StartGame(new StartGameArgs { GameMode = GameMode.Shared });
+        var startGameArgs = new StartGameArgs
+        {
+            GameMode = GameMode.Shared,
+            PlayerCount = 2,
+            //SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
+        };
+        var result = await networkRunner.StartGame(startGameArgs);
 
         // 結果をデバックログに出す
         Debug.Log(result);
@@ -59,8 +66,11 @@ public class GameLauncher : MonoBehaviour,INetworkRunnerCallbacks
             //runner.Spawn(m_playerAvatarPrefab, spawnPosition, Quaternion.identity);
             runner.Spawn(m_playerAvatarPrefab, spawnPosition, Quaternion.identity, onBeforeSpawned:(_,NetworkObject) =>
             {
+                //int id = NetworkObject.GetComponent<PlayerAvatar>().Id;
+                int id = runner.SessionInfo.PlayerCount;
+                Debug.Log("Playerのidは" + id);
                 // プレイヤー名のネットワークプロパティの初期値として、ランダムな名前を設定する
-                NetworkObject.GetComponent<PlayerAvatar>().NickName = $"Player{UnityEngine.Random.Range(0, 10000)}";
+                NetworkObject.GetComponent<PlayerAvatar>().NickName = $"Player{id}";
             });
         }
     }
