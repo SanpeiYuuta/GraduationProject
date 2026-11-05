@@ -1,4 +1,6 @@
 using Fusion;
+using Photon.Realtime;
+using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -22,23 +24,38 @@ public class PlayerAvatar : NetworkBehaviour
     [Networked] private Vector3 m_startPos { get; set; } // 初期位置
 
     private float m_speed = 3.0f;
+    private Vector3 m_moveVec = new Vector3(0.0f, 0.0f, 0.0f);
+    private Quaternion m_rotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
 
     [Networked] private int m_id { get; set; } = 0;
 
     [Networked] private bool m_restartFlag { get; set; } = false;
+    [Networked] private bool m_beforReStartFlag { get; set; } = false;
+    [Networked] bool m_reStartChackFlag { get; set; } = false; // リスタート完了しているか確認するフラグ
+
+    // 角度関係
+    protected Vector3 m_directionVec;
+    protected float m_totalAngle = 0.0f; // カメラの角度と移動方向の角度を足したもの
+    protected Vector3 m_moveValue;
+    protected float m_playerAngle; // 移動方向の角度
+
 
     // インプットアクション
+    protected Dictionary<string, InputAction> m_inputActions = new Dictionary<string, InputAction>();
     private InputAction m_moveAction;
-    private InputAction m_jumpAction;
+    private InputAction m_dodgeAction;
     private InputAction m_dashAction;
     private InputAction m_attackAction;
 
     GameObject m_camera;
 
     // 攻撃用のステートマシン
-    private StateMachineShot m_stateMachineAttack;
+    //private StateMachineShot m_stateMachineAttack;
     // バトルマネージャー
     [SerializeField] private GameBattleManager m_battleManager;
+
+    // 行動用のステートマシン
+    private StateMachinePlayer m_stateMachinePlayer;
 
     // これがフォトンのビヘイビアにとってのStart()
     public override void Spawned()
@@ -52,9 +69,13 @@ public class PlayerAvatar : NetworkBehaviour
 
         // MoveとJumpのアクションを取得
         m_moveAction = InputSystem.actions.FindAction("Move");
-        m_jumpAction = InputSystem.actions.FindAction("Jump");
+        m_inputActions.Add("Move", m_moveAction);
+        m_dodgeAction = InputSystem.actions.FindAction("Dodge");
+        m_inputActions.Add("Dodge", m_dodgeAction);
         m_dashAction = InputSystem.actions.FindAction("Dash");
+        m_inputActions.Add("Dash", m_dashAction);
         m_attackAction = InputSystem.actions.FindAction("Attack");
+        m_inputActions.Add("Attack", m_attackAction);
 
         // ↓これはInputSystemのアクションマップを使用しない場合の例
         // 直接コードでアクションを書くときはこうなる
@@ -84,21 +105,15 @@ public class PlayerAvatar : NetworkBehaviour
 
         battleManager.SetPlayer(Object);
 
-
-        //var batteleManagerStateAuthorty = ba.GetComponent<NetworkObject>().StateAuthority;
-        //Debug.Log("バトルマネージャーのStateAuthorityは" + batteleManagerStateAuthorty);
-
-        //if (batteleManagerStateAuthorty == PlayerRef.None)
-        //{
-        //    battleManager.GetComponent<NetworkObject>().RequestStateAuthority(); // StateAuthorityを要求する
-        //}
-
         // プレイヤー名をテキストに反映させる
         var view = GetComponent<PlayerAvatarView>();
         view.SetNickName(NickName.Value);
 
-        // 攻撃用のステートマシン作成
-        m_stateMachineAttack = new StateMachineShot(Object, m_bullet);
+        //// 攻撃用のステートマシン作成
+        //m_stateMachineAttack = new StateMachineShot(Object, m_bullet);
+
+        // 行動用のステートマシン作成
+        m_stateMachinePlayer = new StateMachinePlayer(Object, m_camera);
 
         // ボタンに対して自分を登録する
         var reStartButton = GameObject.Find("Canvas");
@@ -114,13 +129,14 @@ public class PlayerAvatar : NetworkBehaviour
         var gameManager = GameObject.Find("GameBattleManager(Clone)").GetComponent<GameBattleManager>();
         var gamePhase = gameManager.GetGamePhase();
 
-        if (gamePhase <= E_GamePhase.Preparation)   return;
+        //if (gamePhase <= E_GamePhase.Preparation)   return;
         if (!m_active) return;
-        
-        // デバック
-        if(gamePhase == E_GamePhase.Start)
+
+        // デバック(この形で本実装するかも)
+        if (gamePhase == E_GamePhase.Battle)
         {
-            RestartFlag = false;
+            // リスタートフラグを初期化
+            m_restartFlag = false;
         }
 
         //// 体力0になった時の処理
@@ -136,38 +152,38 @@ public class PlayerAvatar : NetworkBehaviour
 
         float delta = Runner.DeltaTime; // ネットワークのデルタタイムを使用する
 
-        // 移動
-        float cameraAngle = m_camera.GetComponent<CameraMove>().GetAngle(); // カメラの角度を渡す
-        //Vector2 cameraValue = new Vector2(cameraForward.x, cameraForward.z).normalized;
+        //// 移動
+        //float cameraAngle = m_camera.GetComponent<CameraMove>().GetAngle(); // カメラの角度を渡す
+        ////Vector2 cameraValue = new Vector2(cameraForward.x, cameraForward.z).normalized;
 
-        var moveValue = m_moveAction.ReadValue<Vector2>();
-        float moveAngle = Mathf.Atan2(moveValue.x, moveValue.y);
+        //var moveValue = m_moveAction.ReadValue<Vector2>();
+        //float moveAngle = Mathf.Atan2(moveValue.x, moveValue.y);
 
-        var totalMoveAngle = moveAngle - cameraAngle;
-        //var move = new Vector3(totalMoveValue.x, 0.0f, totalMoveValue.y) * m_speed * delta;
-        var moveVec = new Vector3(Mathf.Cos(totalMoveAngle), 0.0f, -Mathf.Sin(totalMoveAngle));
+        //var totalMoveAngle = moveAngle - cameraAngle;
+        ////var move = new Vector3(totalMoveValue.x, 0.0f, totalMoveValue.y) * m_speed * delta;
+        //var moveVec = new Vector3(Mathf.Cos(totalMoveAngle), 0.0f, -Mathf.Sin(totalMoveAngle));
 
-        //Debug.Log("向いている角度：" + totalMoveAngle);
+        ////Debug.Log("向いている角度：" + totalMoveAngle);
 
-        Vector3 move = new Vector3(0.0f, 0.0f, 0.0f);
-        if (m_dashAction.IsPressed() && (moveValue.x != 0.0f || moveValue.y != 0.0f))
-        {
-            move = new Vector3(moveVec.x, 0.0f, moveVec.z) * (m_speed * 3.0f);
-            transform.position += move * delta;
-            transform.rotation = Quaternion.Euler(0.0f, (totalMoveAngle * Mathf.Rad2Deg) + 90.0f, 0.0f);
-        }
-        else if (moveValue.x != 0.0f || moveValue.y != 0.0f)
-        {
-            move = new Vector3(moveVec.x, 0.0f, moveVec.z) * m_speed;
-            transform.position += move * delta;
-            transform.rotation = Quaternion.Euler(0.0f, (totalMoveAngle * Mathf.Rad2Deg) + 90.0f, 0.0f);
-        }
+        //Vector3 move = new Vector3(0.0f, 0.0f, 0.0f);
+        //if (m_dashAction.IsPressed() && (moveValue.x != 0.0f || moveValue.y != 0.0f))
+        //{
+        //    move = new Vector3(moveVec.x, 0.0f, moveVec.z) * (m_speed * 3.0f);
+        //    transform.position += move * delta;
+        //    transform.rotation = Quaternion.Euler(0.0f, (totalMoveAngle * Mathf.Rad2Deg) + 90.0f, 0.0f);
+        //}
+        //else if (moveValue.x != 0.0f || moveValue.y != 0.0f)
+        //{
+        //    move = new Vector3(moveVec.x, 0.0f, moveVec.z) * m_speed;
+        //    transform.position += move * delta;
+        //    transform.rotation = Quaternion.Euler(0.0f, (totalMoveAngle * Mathf.Rad2Deg) + 90.0f, 0.0f);
+        //}
 
-        // ジャンプ
-        if (m_jumpAction.IsPressed())
-        {
-            //m_characterController.Jump();
-        }
+        //// ジャンプ
+        //if (m_jumpAction.IsPressed())
+        //{
+        //    //m_characterController.Jump();
+        //}
 
         // デバック用のif書きました
         if(m_attackAction.IsPressed())
@@ -176,11 +192,15 @@ public class PlayerAvatar : NetworkBehaviour
             //m_hp = Random.Range(1, 10);
         }
 
+        // 移動反映
+        transform.position += m_moveVec * delta;
+        transform.rotation = m_rotation;
+
         // アニメーション
         var animator = m_animator.Animator;
         //var grounded = m_characterController.Grounded;
         //var vy = m_characterController.Velocity.y;
-        Vector2 animationMove = new Vector2(move.x, move.z);
+        Vector2 animationMove = new Vector2(m_moveVec.x, m_moveVec.z);
         animator.SetFloat("Speed", animationMove.magnitude * 50.0f);
         //animator.SetBool("Jump", !grounded && vy > 4.0f);
         //animator.SetBool("Grounded", grounded);
@@ -188,7 +208,10 @@ public class PlayerAvatar : NetworkBehaviour
         animator.SetFloat("MotionSpeed", 1.0f);
 
         // ステートマシンの更新
-        m_stateMachineAttack.OnUpdate();
+        //m_stateMachineAttack.OnUpdate();
+        m_stateMachinePlayer.OnUpdate();
+
+        //Debug.Log("m_rotation：" + m_rotation);
     }
 
 
@@ -228,19 +251,109 @@ public class PlayerAvatar : NetworkBehaviour
         set { m_restartFlag = value; }
     }
 
+    public bool beforReStartFlag
+    {
+        get { return m_beforReStartFlag; }
+    }
+
+    public bool RestartChackFlag
+    {
+        get { return m_reStartChackFlag; }
+        set { m_reStartChackFlag = value; }
+    }
+
     public bool Active 
     { 
         get { return m_active; }
         set { m_active = value; }
     }
 
-    [Rpc(RpcSources.All,RpcTargets.StateAuthority)]
-    public void DamegeRpc(int damege)
+    public Vector3 MoveVec
     {
-        Debug.Log("ダメージを受ける前：" + m_hp);
-        m_hp -= damege;
-        Debug.Log("ダメージを受けた後：" + m_hp);
+        get { return m_moveVec; }
+        set { m_moveVec = value; }
     }
+
+    public Quaternion Rotation
+    {
+        get { return m_rotation; }
+        set { m_rotation = value; }
+    }
+
+    // 方向ベクトル
+    public Vector3 directionVec
+    {
+        get { return m_directionVec; }
+        set { m_directionVec = value; }
+    }
+
+    // カメラの角度と移動方向の角度を足したもの
+    public float totalAngle
+    {
+        get { return m_totalAngle; }
+        set { m_totalAngle = value; }
+    }
+
+    // 移動ベクトル
+    public Vector3 moveValue
+    {
+        get { return m_moveValue; }
+        set { m_moveValue = value; }
+    }
+
+    // 移動方向の角度
+    public float playerAngle
+    {
+        get { return m_playerAngle; }
+        set { m_playerAngle = value; }
+    }
+
+    // 攻撃を受けるときの関数
+    [Rpc(RpcSources.All,RpcTargets.StateAuthority)]
+    public void DamegeRpc(string attackName)
+    {
+        Debug.Log("テスト");
+        // 攻撃マネージャー取得 このエラー確認方法はよろしくないので修正する予定
+        var attackManagerObj = GameObject.Find("AttackManager");
+        if (!attackManagerObj) return;
+        var attackManager = attackManagerObj.GetComponent<AttackManager>();
+
+        // 攻撃データの取得
+        var attackDeta = attackManager.GetAttackDeta(attackName);
+
+        Debug.Log("ダメージを受けた");
+        m_hp -= attackDeta.attackPower;
+    }
+
+    public StateMachinePlayer GetStateMachinePlayer()
+    {
+        return m_stateMachinePlayer;
+    }
+
+    // ゲームリスタートの関数 RPCの呼び出しうまくいかない...
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    public void PlayerResetRpc()
+    {
+        m_hp = 3;
+        transform.position = m_startPos;
+        m_restartFlag = false;
+        m_battleManager.GetComponent<GameBattleManager>().SetPlayer(Object);
+        //m_battleManager.SetGamePhase(E_GamePhase.Start);
+    }
+
+    // コントローラー、キーマウの入力を取得する関数
+    public Dictionary<string, InputAction> GetInputActions()
+    {
+        return m_inputActions;
+    }
+
+    // 攻撃用オブジェクトを生成する関数
+    //public void CreateAttackObject(HitInfo hitInfo,float activeTime)
+    //{
+    //    //Instantiate()
+
+    //    //Runner.Spawn(attackObj, transform.position + transform.forward * 1.0f, transform.rotation, Object);
+    //}
 
     //private void Active()
 }

@@ -56,7 +56,7 @@ public class GameBattleManager : NetworkBehaviour
     // Update is called once per frame
     public override void FixedUpdateNetwork()
     {
-        Debug.Log("現在のフェーズは" + m_gamePhase);
+        //Debug.Log("現在のフェーズは" + m_gamePhase);
 
         // 戦闘人数に満たしていない時は処理しない
         if (m_playerObjects.Count < m_maxPlayerNum) return;
@@ -86,6 +86,16 @@ public class GameBattleManager : NetworkBehaviour
         {
             // 開始演出をする(後々演出を入れるために書いておく)
             m_currentStartTextTime += delta;
+
+            // リスタート用に戦闘プレイヤーの全員がちゃんとリスタートを完了できたか確認する
+            foreach (var player in m_battlePlayers)
+            {
+                bool reStartChackFlag = player.GetComponent<PlayerAvatar>().RestartChackFlag;
+                if (reStartChackFlag)
+                {
+                    //player.GetComponent<PlayerAvatar>().RestartFlag = false;
+                }
+            }
 
             if (m_currentStartTextTime < m_maxStartTextTime) return;
 
@@ -183,6 +193,7 @@ public class GameBattleManager : NetworkBehaviour
     }
 
     // リスタートする関数(RPC化させてみる？)
+    // 後々リスタート処理はリファクタリング必要と考えるリスタートOk状態がバトルステートの時にfalseにするは危険だと思う
     private void ReStart()
     {
         Debug.Log("リスタート");
@@ -195,6 +206,8 @@ public class GameBattleManager : NetworkBehaviour
         foreach (var player in m_battlePlayers)
         {
             PlayerAvatar playerAvatar = player.GetComponent<PlayerAvatar>();
+
+            //playerAvatar.PlayerResetRpc();
 
             playerAvatar.HP = 3;
             player.GetComponent<NetworkObject>().transform.position = playerAvatar.StartPos;
@@ -244,5 +257,10 @@ public class GameBattleManager : NetworkBehaviour
     public E_GamePhase GetGamePhase()
     {
         return m_gamePhase;
+    }
+
+    public void SetGamePhase(E_GamePhase gamePhase)
+    {
+        m_gamePhase = gamePhase;
     }
 }

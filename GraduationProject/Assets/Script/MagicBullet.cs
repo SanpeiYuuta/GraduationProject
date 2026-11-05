@@ -87,10 +87,7 @@ public class MagicBullet : NetworkBehaviour
         {
             // プレイヤーにダメージを与える処理をここに追加
             var player = other.gameObject.GetComponent<PlayerAvatar>();
-            //player.DamegeRpc(1);
-            //player.m_hp -= 1; // HPを1減らす
             player.HP -= 1;
-            //Debug.Log(player.HP);
         }
     }
 

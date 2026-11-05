@@ -27,7 +27,7 @@ public class StateBase
     // Update is called once per frame
     public virtual void OnUpdate()
     {
-        m_deltaTime = Time.deltaTime;
+        m_deltaTime = m_parentObject.Runner.DeltaTime;
     }
 
     public virtual void OnExit()

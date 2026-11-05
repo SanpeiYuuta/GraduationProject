@@ -16,7 +16,7 @@ public class StateMachineShot : StateMachineBase
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public override void OnStart()
     {
-
+        base.OnStart();
     }
 
     // Update is called once per frame

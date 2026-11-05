@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 5535675712875272662}
   - component: {fileID: 4062155698876348708}
   - component: {fileID: 2633649584537815481}
-  - component: {fileID: 1983557014898593193}
+  - component: {fileID: -2990741589020337956}
   m_Layer: 0
-  m_Name: Cube (1)
+  m_Name: DamageObj
   m_TagString: DamageObj
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -113,7 +113,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &1983557014898593193
+--- !u!114 &-2990741589020337956
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -122,13 +122,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 7692637704747910187}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Script: {fileID: 11500000, guid: 898622e3d187c6c40a7861a1d269228f, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Fusion.Runtime.dll::Fusion.NetworkObject
-  SortKey: 3389907273
-  SendPriority: 1
-  EnableInterpolation: 1
-  Flags: 262146
-  NestedObjects: []
-  NetworkedBehaviours: []
-  ForceRemoteRenderTimeframe: 0
+  m_EditorClassIdentifier: Assembly-CSharp::DamageObject
+  m_hitInfo: {fileID: 11400000, guid: cdacd56498b9ee043afe46793b6adaf0, type: 2}
+  m_activeTime: 3
