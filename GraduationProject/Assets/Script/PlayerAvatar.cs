@@ -206,31 +206,12 @@ public class PlayerAvatar : NetworkBehaviour
 
             if (inputAction.WasPressedThisFrame())
             {
-                Debug.Log("入力されたよ");
                 inputStruct.pressed = true;
-                //m_inputDetas[inputName] = inputStruct; // 更新された構造体を戻す(更新させる)
             }
-
             if (inputAction.WasReleasedThisFrame())
             {
-                Debug.Log("入力離されたよ");
                 inputStruct.released = true;
-                ///m_inputDetas[inputName] = inputStruct; // 更新された構造体を戻す(更新させる)
             }
-        }
-
-
-        // デバック用のif書きました
-        if (m_dodgeAction.WasPressedThisFrame())
-        {
-            m_dodgePressed = true;
-            Debug.Log("回避した");
-        }
-
-        if (m_dodgeAction.WasReleasedThisFrame())
-        {
-            m_dodgeReleased = true;
-            Debug.Log("回避をやめた");
         }
     }
 
