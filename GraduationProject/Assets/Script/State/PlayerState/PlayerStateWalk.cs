@@ -19,24 +19,34 @@ public class PlayerStateWalk : PlayerStateBase
     {
         base.OnUpdate();
 
-        // 回避状態移行
-        var dodgeAction = m_playerInputActions["Dodge"];
-        if(dodgeAction.IsPressed())
-        {
-            Debug.Log("回避状態に移行");
-            var myState = m_parentObject.GetComponent<PlayerAvatar>().GetStateMachinePlayer();
-            myState.ChangeState("Dodge");
-            return;
-        }
+        var avater = m_parentObject.GetComponent<PlayerAvatar>();
+        var inputDeta = avater.GetInputDetas();
 
-        // 攻撃状態移行
-        var attackAction = m_playerInputActions["Attack"];
-        if (attackAction.IsPressed())
+        var dodgeInputDeta = inputDeta["Dodge"];
+        var attackAction = inputDeta["Attack"];
+
+        // ステート移行
+        if (dodgeInputDeta.pressed) // 回避状態移行
         {
-            Debug.Log("攻撃状態に移行");
-            var myState = m_parentObject.GetComponent<PlayerAvatar>().GetStateMachinePlayer();
+            var myState = avater.GetStateMachinePlayer();
+            myState.ChangeState("Dodge");
+
+            //// 入力初期化
+            //dodgeInputDeta.pressed = false;
+            //dodgeInputDeta.released = false;
+            //inputDeta["Dodge"] = dodgeInputDeta;
+            //return;
+        }
+        else if (attackAction.pressed) // 攻撃状態移行
+        {
+            var myState = avater.GetStateMachinePlayer();
             myState.ChangeState("AttackFirst");
-            return;
+
+            //// 入力初期化
+            //attackAction.pressed = false;
+            //attackAction.released = false;
+            //inputDeta["Attack"] = attackAction;
+            //return;
         }
 
 
@@ -52,18 +62,20 @@ public class PlayerStateWalk : PlayerStateBase
             // ダッシュ用のスピードの調整したのち移動更新
             move = m_directionVec * (m_speed * 3.0f);
             direction = Quaternion.Euler(0.0f, (m_totalAngle * Mathf.Rad2Deg) + 90.0f, 0.0f);
-            m_parentObject.GetComponent<PlayerAvatar>().Rotation = direction;
+            avater.Rotation = direction;
         }
         else if(controllerVec != new Vector2(0.0f, 0.0f))
         {
             // 徒歩用のスピードの調整したのち移動更新
             move = m_directionVec * m_speed;
             direction = Quaternion.Euler(0.0f, (m_totalAngle * Mathf.Rad2Deg) + 90.0f, 0.0f);
-            m_parentObject.GetComponent<PlayerAvatar>().Rotation = direction;
+            avater.Rotation = direction;
         }
 
         // 移動反映
-        m_parentObject.GetComponent<PlayerAvatar>().MoveVec = move;
+        avater.MoveVec = move;
+        // 入力初期化
+        avater.ResetInputDetas();
     }
 
     public override void OnExit()

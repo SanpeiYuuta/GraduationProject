@@ -9,6 +9,7 @@ using UnityEngine.InputSystem;
 public class PlayerStateBase : StateBase
 {
     protected Dictionary<string, InputAction> m_playerInputActions = new Dictionary<string, InputAction>();
+    protected Dictionary<string, InputDeta> m_playerInputDetas = new Dictionary<string, InputDeta>();
 
     GameObject m_camera; // カメラ
 
@@ -28,6 +29,7 @@ public class PlayerStateBase : StateBase
         // プレイヤー操作用のInputActionを取得
         var playerAvatar = m_parentObject.GetComponent<PlayerAvatar>();
         m_playerInputActions = playerAvatar.GetInputActions();
+        m_playerInputDetas = playerAvatar.GetInputDetas();
 
         base.OnEnter();
     }

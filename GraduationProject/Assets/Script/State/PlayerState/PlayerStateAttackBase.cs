@@ -20,6 +20,9 @@ public class PlayerStateAttackBase : PlayerStateBase
     // プラスする攻撃力
     protected float m_addAttackPower = 0.0f;
 
+    // 攻撃判定出現フラグ
+    protected bool m_attackCollisionFlag = false;
+
     public PlayerStateAttackBase(NetworkObject parentObject, GameObject cameraObject) : base(parentObject, cameraObject)
     {
 

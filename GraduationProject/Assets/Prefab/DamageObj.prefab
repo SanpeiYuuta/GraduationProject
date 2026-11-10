@@ -126,4 +126,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DamageObject
   m_hitInfo: {fileID: 11400000, guid: cdacd56498b9ee043afe46793b6adaf0, type: 2}
-  m_activeTime: 3
+  m_activeTime: 0.3

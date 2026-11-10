@@ -6,6 +6,19 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
 
+// 入力についてのデータ構造
+public class InputDeta
+{
+    public bool pressed;
+    public bool released;
+
+    public void Reset()
+    {
+        pressed = false;
+        released = false;
+    }
+}
+
 public class PlayerAvatar : NetworkBehaviour
 {
     // ステータス
@@ -42,10 +55,17 @@ public class PlayerAvatar : NetworkBehaviour
 
     // インプットアクション
     protected Dictionary<string, InputAction> m_inputActions = new Dictionary<string, InputAction>();
+    protected Dictionary<string, InputDeta> m_inputDetas = new Dictionary<string, InputDeta>();
     private InputAction m_moveAction;
     private InputAction m_dodgeAction;
     private InputAction m_dashAction;
     private InputAction m_attackAction;
+
+    // 入力処理
+    private bool m_attackPressed = false;
+    private bool m_attackReleased = false;
+    public bool m_dodgePressed = false;
+    public bool m_dodgeReleased = false;
 
     GameObject m_camera;
 
@@ -72,10 +92,12 @@ public class PlayerAvatar : NetworkBehaviour
         m_inputActions.Add("Move", m_moveAction);
         m_dodgeAction = InputSystem.actions.FindAction("Dodge");
         m_inputActions.Add("Dodge", m_dodgeAction);
+        m_inputDetas.Add("Dodge", new InputDeta { pressed = false, released = false });
         m_dashAction = InputSystem.actions.FindAction("Dash");
         m_inputActions.Add("Dash", m_dashAction);
         m_attackAction = InputSystem.actions.FindAction("Attack");
         m_inputActions.Add("Attack", m_attackAction);
+        m_inputDetas.Add("Attack", new InputDeta { pressed = false, released = false });
 
         // ↓これはInputSystemのアクションマップを使用しない場合の例
         // 直接コードでアクションを書くときはこうなる
@@ -119,6 +141,10 @@ public class PlayerAvatar : NetworkBehaviour
         var reStartButton = GameObject.Find("Canvas");
         Debug.Log(reStartButton);
         reStartButton.GetComponent<ReStartButton>().SetParentObject(Object);
+
+        // 攻撃マネージャーに対して自分を登録する
+        var attackManagerObj = GameObject.Find("AttackManager");
+        attackManagerObj.GetComponent<AttackManager>().SetPlayer(Object);
     }
 
     // これがフォトンのビヘイビアにとってのUpdate()
@@ -139,58 +165,7 @@ public class PlayerAvatar : NetworkBehaviour
             m_restartFlag = false;
         }
 
-        //// 体力0になった時の処理
-        //if (m_hp <= 0)
-        //{
-        //    //transform.position = m_startPos; // リスポーン位置に移動
-        //    //m_hp = m_maxHp; // HPを回復
-        //    //Transform model = transform.Find("Armature");
-        //    //model.gameObject.SetActive(false); // モデルを非表示にする(更新もしない)
-        //    //gameObject.SetActive(false);
-        //    return;
-        //}
-
         float delta = Runner.DeltaTime; // ネットワークのデルタタイムを使用する
-
-        //// 移動
-        //float cameraAngle = m_camera.GetComponent<CameraMove>().GetAngle(); // カメラの角度を渡す
-        ////Vector2 cameraValue = new Vector2(cameraForward.x, cameraForward.z).normalized;
-
-        //var moveValue = m_moveAction.ReadValue<Vector2>();
-        //float moveAngle = Mathf.Atan2(moveValue.x, moveValue.y);
-
-        //var totalMoveAngle = moveAngle - cameraAngle;
-        ////var move = new Vector3(totalMoveValue.x, 0.0f, totalMoveValue.y) * m_speed * delta;
-        //var moveVec = new Vector3(Mathf.Cos(totalMoveAngle), 0.0f, -Mathf.Sin(totalMoveAngle));
-
-        ////Debug.Log("向いている角度：" + totalMoveAngle);
-
-        //Vector3 move = new Vector3(0.0f, 0.0f, 0.0f);
-        //if (m_dashAction.IsPressed() && (moveValue.x != 0.0f || moveValue.y != 0.0f))
-        //{
-        //    move = new Vector3(moveVec.x, 0.0f, moveVec.z) * (m_speed * 3.0f);
-        //    transform.position += move * delta;
-        //    transform.rotation = Quaternion.Euler(0.0f, (totalMoveAngle * Mathf.Rad2Deg) + 90.0f, 0.0f);
-        //}
-        //else if (moveValue.x != 0.0f || moveValue.y != 0.0f)
-        //{
-        //    move = new Vector3(moveVec.x, 0.0f, moveVec.z) * m_speed;
-        //    transform.position += move * delta;
-        //    transform.rotation = Quaternion.Euler(0.0f, (totalMoveAngle * Mathf.Rad2Deg) + 90.0f, 0.0f);
-        //}
-
-        //// ジャンプ
-        //if (m_jumpAction.IsPressed())
-        //{
-        //    //m_characterController.Jump();
-        //}
-
-        // デバック用のif書きました
-        if(m_attackAction.IsPressed())
-        {
-            //Debug.Log("攻撃した");
-            //m_hp = Random.Range(1, 10);
-        }
 
         // 移動反映
         transform.position += m_moveVec * delta;
@@ -210,11 +185,7 @@ public class PlayerAvatar : NetworkBehaviour
         // ステートマシンの更新
         //m_stateMachineAttack.OnUpdate();
         m_stateMachinePlayer.OnUpdate();
-
-        //Debug.Log("m_rotation：" + m_rotation);
     }
-
-
 
     // フォトンのビヘイビアを使用する場合従来のStartやUpdateなどが使用できないので上の
     // Spawned()やFixedUpdateNetwork()などを使用する必要がある
@@ -226,7 +197,41 @@ public class PlayerAvatar : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
-       // Debug.Log("私のHPは：" + m_hp);
+        // 瞬間の入力を保管する
+        foreach (var inputDeta in m_inputDetas)
+        {
+            var inputName = inputDeta.Key;
+            var inputStruct = inputDeta.Value;
+            var inputAction = m_inputActions[inputName];
+
+            if (inputAction.WasPressedThisFrame())
+            {
+                Debug.Log("入力されたよ");
+                inputStruct.pressed = true;
+                //m_inputDetas[inputName] = inputStruct; // 更新された構造体を戻す(更新させる)
+            }
+
+            if (inputAction.WasReleasedThisFrame())
+            {
+                Debug.Log("入力離されたよ");
+                inputStruct.released = true;
+                ///m_inputDetas[inputName] = inputStruct; // 更新された構造体を戻す(更新させる)
+            }
+        }
+
+
+        // デバック用のif書きました
+        if (m_dodgeAction.WasPressedThisFrame())
+        {
+            m_dodgePressed = true;
+            Debug.Log("回避した");
+        }
+
+        if (m_dodgeAction.WasReleasedThisFrame())
+        {
+            m_dodgeReleased = true;
+            Debug.Log("回避をやめた");
+        }
     }
 
     public int HP
@@ -345,6 +350,25 @@ public class PlayerAvatar : NetworkBehaviour
     public Dictionary<string, InputAction> GetInputActions()
     {
         return m_inputActions;
+    }
+
+    // コントローラー、キーマウの入力を取得する関数(瞬間の処理用)
+    public Dictionary<string, InputDeta> GetInputDetas()
+    {
+        return m_inputDetas;
+    }
+
+    // 入力の瞬間の処理を初期化する関数
+    public void ResetInputDetas()
+    {
+        Dictionary<string, InputDeta> copyInputDetas = new Dictionary<string, InputDeta>(m_inputDetas); // コピーを作る   
+        foreach (var inputDeta in copyInputDetas)
+        {
+            var inputName = inputDeta.Key;
+            var inputStruct = inputDeta.Value;
+            inputStruct.Reset();
+            //m_inputDetas[inputName] = inputStruct; // 更新された構造体を戻す(更新させる)
+        }
     }
 
     // 攻撃用オブジェクトを生成する関数

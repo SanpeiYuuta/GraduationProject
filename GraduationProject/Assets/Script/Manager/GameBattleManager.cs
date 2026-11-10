@@ -116,8 +116,8 @@ public class GameBattleManager : NetworkBehaviour
             {
                 int playerHp = player.GetComponent<PlayerAvatar>().HP; // プレイヤーのHPをチェックする
                 int playerId = player.GetComponent<PlayerAvatar>().Id;
-                Debug.Log($"{count}PHP : {playerHp}");
-                Debug.Log($"{count}PID : {playerId}");
+                //Debug.Log($"{count}PHP : {playerHp}");
+                //Debug.Log($"{count}PID : {playerId}");
                 if (playerHp <= 0) // プレイヤーが倒れたら
                 {
                     m_gamePhase = E_GamePhase.BattleEnd; // ゲームフェーズを結果にする

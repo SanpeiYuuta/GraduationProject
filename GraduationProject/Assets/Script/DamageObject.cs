@@ -42,9 +42,18 @@ public class DamageObject : MonoBehaviour
     // 誰が攻撃したか(攻撃した瞬間は同期されてなければならないためNetWork限定)
     private NetworkObject m_parentObj;
 
+    bool m_triggerActive = true;
+
     void Start()
     {
+        var attackManager = GameObject.Find("AttackManager");
+        var player = attackManager.GetComponent<AttackManager>().ParentObj;
 
+        if (player != m_parentObj)
+        {
+            Debug.Log("攻撃するものとプレイヤー同一ではない");
+            m_triggerActive = false;
+        }
     }
 
     void Update()
@@ -77,8 +86,10 @@ public class DamageObject : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (!m_triggerActive) return;
+
         // 攻撃が当たったのが攻撃をしたプレイヤーならダメージ処理は無視する
-        if(other.gameObject.TryGetComponent<NetworkObject>(out var networkObject))
+        if (other.gameObject.TryGetComponent<NetworkObject>(out var networkObject))
         {
             Debug.Log("無視したよ");
             if (networkObject == m_parentObj) return;
@@ -98,6 +109,8 @@ public class DamageObject : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
+        if (!m_triggerActive) return;
+
         Debug.Log("トリガーから出たよ");
     }
 
