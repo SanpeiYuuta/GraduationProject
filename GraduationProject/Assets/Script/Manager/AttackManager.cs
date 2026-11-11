@@ -13,6 +13,8 @@ public class AttackManager : MonoBehaviour
     //[SerializeField] NetworkObject m_playerAttackFirstStartObj;
     // プレイヤーの二段目攻撃
     [SerializeField] GameObject m_playerAttackSecond;
+    // プレイヤーの三段目攻撃
+    [SerializeField] GameObject m_playerAttackThird;
 
     // 攻撃の情報を保管するためのプレハブ
     [SerializeField] NetworkObject m_playerAttackStartObj;
@@ -40,6 +42,10 @@ public class AttackManager : MonoBehaviour
         // プレイヤー二段目攻撃登録
         attackName = m_playerAttackSecond.GetComponent<DamageObject>().HitInfo.attackName;
         m_attackArray.Add(attackName, m_playerAttackSecond);
+
+        // プレイヤー三段目攻撃登録
+        attackName = m_playerAttackThird.GetComponent<DamageObject>().HitInfo.attackName;
+        m_attackArray.Add(attackName, m_playerAttackThird);
 
         //// プレイヤー一段目攻撃の生成用オブジェクト登録
         //string attackStartObjName = m_playerAttackFirstStartObj.GetComponent<DamageObject>().HitInfo.attackName;

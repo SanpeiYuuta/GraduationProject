@@ -54,7 +54,7 @@ public class PlayerStateAttackFirst : PlayerStateAttackBase
         var dodgeAction = m_playerInputDetas["Dodge"];
         if (attackAction.pressed) m_isNextAttack = true;
 
-        //ŽŸ‚ÌUŒ‚‚É‘JˆÚ‚·‚é
+        //ŽŸ‚ÌƒXƒe[ƒg‚É‘JˆÚ‚·‚é
         if(m_isNextAttack && m_countAttackTime >= m_graceTimeNextAttack)
         {
             m_parentObject.GetComponent<PlayerAvatar>().GetStateMachinePlayer().ChangeState("AttackSecond");

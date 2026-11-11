@@ -30,23 +30,11 @@ public class PlayerStateWalk : PlayerStateBase
         {
             var myState = avater.GetStateMachinePlayer();
             myState.ChangeState("Dodge");
-
-            //// “ü—Í‰Šú‰»
-            //dodgeInputDeta.pressed = false;
-            //dodgeInputDeta.released = false;
-            //inputDeta["Dodge"] = dodgeInputDeta;
-            //return;
         }
         else if (attackAction.pressed) // UŒ‚ó‘ÔˆÚs
         {
             var myState = avater.GetStateMachinePlayer();
             myState.ChangeState("AttackFirst");
-
-            //// “ü—Í‰Šú‰»
-            //attackAction.pressed = false;
-            //attackAction.released = false;
-            //inputDeta["Attack"] = attackAction;
-            //return;
         }
 
 

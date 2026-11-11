@@ -14,6 +14,7 @@ public class StateMachinePlayer : StateMachineBase
         AddState("Dodge", new PlayerStateDodge(m_parentObject, cameraObject));
         AddState("AttackFirst", new PlayerStateAttackFirst(m_parentObject, cameraObject));
         AddState("AttackSecond", new PlayerStateAttackSecond(m_parentObject, cameraObject));
+        AddState("AttackThird", new PlayerStateAttackThird(m_parentObject, cameraObject));
         ChangeState("Walk");
     }
 

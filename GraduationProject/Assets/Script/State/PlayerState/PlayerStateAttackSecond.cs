@@ -1,5 +1,8 @@
 using Fusion;
 using UnityEngine;
+/// <summary>
+/// 攻撃の二段目のステート(近接)
+/// </summary>
 
 public class PlayerStateAttackSecond : PlayerStateAttackBase
 {
@@ -52,14 +55,18 @@ public class PlayerStateAttackSecond : PlayerStateAttackBase
         if (attackAction.pressed) m_isNextAttack = true;
 
         //次のステートに遷移する
-        if (m_countAttackTime >= m_attackTimeMax)
+        if(m_isNextAttack && m_countAttackTime >= m_graceTimeNextAttack)
         {
-            // 攻撃が一定時間過ぎたら元のステートに戻る
-            m_parentObject.GetComponent<PlayerAvatar>().GetStateMachinePlayer().ChangeState("Walk");
+            m_parentObject.GetComponent<PlayerAvatar>().GetStateMachinePlayer().ChangeState("AttackThird");
         }
         else if (dodgeAction.pressed && m_countAttackTime >= m_graceTimeNextAttack) // 回避状態移行
         {
             m_parentObject.GetComponent<PlayerAvatar>().GetStateMachinePlayer().ChangeState("Dodge");
+        }
+        else if (m_countAttackTime >= m_attackTimeMax)
+        {
+            // 攻撃が一定時間過ぎたら元のステートに戻る
+            m_parentObject.GetComponent<PlayerAvatar>().GetStateMachinePlayer().ChangeState("Walk");
         }
 
 
