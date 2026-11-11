@@ -67,6 +67,13 @@ public class PlayerAvatar : NetworkBehaviour
     public bool m_dodgePressed = false;
     public bool m_dodgeReleased = false;
 
+    // フラグ
+    private bool m_canDodgeFlag = true; // 回避してよいかのフラグ
+
+    // クールタイム
+    [SerializeField] float m_maxDodgeCoolTime = 1.0f; // 回避のクールタイム
+    private float m_countDodgeCoolTime = 0.0f; // 回避のクールタイムカウント
+
     GameObject m_camera;
 
     // 攻撃用のステートマシン
@@ -166,6 +173,20 @@ public class PlayerAvatar : NetworkBehaviour
         }
 
         float delta = Runner.DeltaTime; // ネットワークのデルタタイムを使用する
+
+        // 回避クールタイム計測
+        if(!m_canDodgeFlag)
+        {
+            m_countDodgeCoolTime += delta;
+
+            // クールタイムが経過したら回避可能にする
+            if (m_countDodgeCoolTime >= m_maxDodgeCoolTime)
+            {
+                Debug.Log("回避可能");
+                m_canDodgeFlag = true;
+                m_countDodgeCoolTime = 0.0f;
+            }
+        }
 
         // 移動反映
         transform.position += m_moveVec * delta;
@@ -292,6 +313,13 @@ public class PlayerAvatar : NetworkBehaviour
     {
         get { return m_playerAngle; }
         set { m_playerAngle = value; }
+    }
+
+    // 回避してよいかのフラグ
+    public bool CanDodgeFlag
+    {
+        get { return m_canDodgeFlag; }
+        set { m_canDodgeFlag = value; }
     }
 
     // 攻撃を受けるときの関数

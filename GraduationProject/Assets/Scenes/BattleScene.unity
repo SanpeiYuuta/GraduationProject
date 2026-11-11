@@ -1158,7 +1158,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameLauncher
   m_networkRunnerPrefab: {fileID: 3215891757292283082, guid: 6b3c0b8cd7f7a534abfa8ecbed09220c, type: 3}
   m_playerAvatarPrefab:
-    RawGuidValue: e20200cad609c6c40afa17f3d75495a0l
+    RawGuidValue: f8e94a451a955b6439e49198a3468d0el
   m_cameraPrefab: {fileID: 0}
 --- !u!1001 &669941863
 PrefabInstance:
@@ -1226,6 +1226,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3738097951239022372, guid: e20200cad609c6c40afa17f3d75495a0, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4063018937512179904, guid: e20200cad609c6c40afa17f3d75495a0, type: 3}
       propertyPath: m_Name
       value: Player
@@ -1234,9 +1238,13 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4083556381129964958, guid: e20200cad609c6c40afa17f3d75495a0, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4469605954222649894, guid: e20200cad609c6c40afa17f3d75495a0, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 9.463942
+      value: 5.42
       objectReference: {fileID: 0}
     - target: {fileID: 4469605954222649894, guid: e20200cad609c6c40afa17f3d75495a0, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1337,6 +1345,7 @@ MonoBehaviour:
   m_bullet: {fileID: 0}
   m_dodgePressed: 0
   m_dodgeReleased: 0
+  m_maxDodgeCoolTime: 1
   m_battleManager: {fileID: 0}
 --- !u!114 &674159038
 MonoBehaviour:
@@ -2566,6 +2575,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AttackManager
   m_playerAttackFirst: {fileID: 7692637704747910187, guid: 6a07709089cf115408848f99c315f790, type: 3}
   m_playerAttackSecond: {fileID: 7692637704747910187, guid: 0f48d6a1d8660d14c945511895040a74, type: 3}
+  m_playerAttackThird: {fileID: 7692637704747910187, guid: 3d624bf1dde68dc419b292575361e789, type: 3}
   m_playerAttackStartObj: {fileID: 6079293745658079678, guid: 18cd22d33854d7d439c6ea7ed77707c3, type: 3}
 --- !u!4 &2063842542
 Transform:

@@ -26,10 +26,11 @@ public class PlayerStateWalk : PlayerStateBase
         var attackAction = inputDeta["Attack"];
 
         // ステート移行
-        if (dodgeInputDeta.pressed) // 回避状態移行
+        if (dodgeInputDeta.pressed && avater.CanDodgeFlag) // 回避状態移行
         {
             var myState = avater.GetStateMachinePlayer();
             myState.ChangeState("Dodge");
+            avater.CanDodgeFlag = false;
         }
         else if (attackAction.pressed) // 攻撃状態移行
         {

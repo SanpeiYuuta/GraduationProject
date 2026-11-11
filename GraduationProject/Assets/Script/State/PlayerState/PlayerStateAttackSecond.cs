@@ -38,6 +38,7 @@ public class PlayerStateAttackSecond : PlayerStateAttackBase
         m_countAttackTime += m_deltaTime;
 
         var attackManager = GameObject.Find("AttackManager").GetComponent<AttackManager>();
+        var avater = m_parentObject.GetComponent<PlayerAvatar>();
 
         // UŒ‚‚ğo‚·
         if (m_countAttackTime >= m_attackTimeMaxFirst && !m_attackCollisionFlag)
@@ -61,7 +62,10 @@ public class PlayerStateAttackSecond : PlayerStateAttackBase
         }
         else if (dodgeAction.pressed && m_countAttackTime >= m_graceTimeNextAttack) // ‰ñ”ğó‘ÔˆÚs
         {
+            if (!avater.CanDodgeFlag) return;
+
             m_parentObject.GetComponent<PlayerAvatar>().GetStateMachinePlayer().ChangeState("Dodge");
+            avater.CanDodgeFlag = false;
         }
         else if (m_countAttackTime >= m_attackTimeMax)
         {

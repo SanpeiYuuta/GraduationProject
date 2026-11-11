@@ -37,10 +37,10 @@ public class PlayerStateAttackFirst : PlayerStateAttackBase
 
         var attackManager = GameObject.Find("AttackManager").GetComponent<AttackManager>();
 
-        
+        var avater = m_parentObject.GetComponent<PlayerAvatar>();
 
         // 攻撃を出す
-        if(m_countAttackTime >= m_attackTimeMaxFirst && !m_attackCollisionFlag)
+        if (m_countAttackTime >= m_attackTimeMaxFirst && !m_attackCollisionFlag)
         {
             // プレイヤーの前方に攻撃オブジェクトを生成
             Vector3 createPos = m_parentObject.transform.position + m_parentObject.transform.forward * 1.0f;
@@ -61,7 +61,10 @@ public class PlayerStateAttackFirst : PlayerStateAttackBase
         }
         else if(dodgeAction.pressed && m_countAttackTime >= m_graceTimeNextAttack) // 回避状態移行
         {
+            if (!avater.CanDodgeFlag) return;
+
             m_parentObject.GetComponent<PlayerAvatar>().GetStateMachinePlayer().ChangeState("Dodge");
+            avater.CanDodgeFlag = false;
         }
         else if (m_countAttackTime >= m_attackTimeMax)
         {
