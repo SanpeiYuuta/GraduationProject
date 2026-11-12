@@ -16,6 +16,20 @@ public class AttackManager : MonoBehaviour
     // ƒvƒŒƒCƒ„[‚ÌO’i–ÚUŒ‚
     [SerializeField] GameObject m_playerAttackThird;
 
+    // ƒ_ƒK[‚Ìˆê’i–ÚUŒ‚
+    [SerializeField] GameObject m_daggerAttackFirst;
+    // ƒ_ƒK[‚Ì“ñ’i–ÚUŒ‚
+    [SerializeField] GameObject m_daggerAttackSecond;
+    // ƒ_ƒK[‚ÌO’i–ÚUŒ‚
+    [SerializeField] GameObject m_daggerAttackThird;
+
+    // ‘åŒ•‚Ìˆê’i–ÚUŒ‚
+    [SerializeField] GameObject m_greatswordAttackFirst;
+    // ‘åŒ•‚Ì“ñ’i–ÚUŒ‚
+    [SerializeField] GameObject m_greatswordAttackSecond;
+    // ‘åŒ•‚ÌO’i–ÚUŒ‚
+    [SerializeField] GameObject m_greatswordAttackThird;
+
     // UŒ‚‚Ìî•ñ‚ğ•ÛŠÇ‚·‚é‚½‚ß‚ÌƒvƒŒƒnƒu
     [SerializeField] NetworkObject m_playerAttackStartObj;
 
@@ -38,14 +52,33 @@ public class AttackManager : MonoBehaviour
         // ƒvƒŒƒCƒ„[ˆê’i–ÚUŒ‚“o˜^
         string attackName = m_playerAttackFirst.GetComponent<DamageObject>().HitInfo.attackName;
         m_attackArray.Add(attackName, m_playerAttackFirst);
-
         // ƒvƒŒƒCƒ„[“ñ’i–ÚUŒ‚“o˜^
         attackName = m_playerAttackSecond.GetComponent<DamageObject>().HitInfo.attackName;
         m_attackArray.Add(attackName, m_playerAttackSecond);
-
         // ƒvƒŒƒCƒ„[O’i–ÚUŒ‚“o˜^
         attackName = m_playerAttackThird.GetComponent<DamageObject>().HitInfo.attackName;
         m_attackArray.Add(attackName, m_playerAttackThird);
+
+        // ƒ_ƒK[ˆê’i–ÚUŒ‚“o˜^
+        attackName = m_daggerAttackFirst.GetComponent<DamageObject>().HitInfo.attackName;
+        m_attackArray.Add(attackName, m_daggerAttackFirst);
+        // ƒ_ƒK[“ñ’i–ÚUŒ‚“o˜^
+        attackName = m_daggerAttackSecond.GetComponent<DamageObject>().HitInfo.attackName;
+        m_attackArray.Add(attackName, m_daggerAttackSecond);
+        // ƒ_ƒK[O’i–ÚUŒ‚“o˜^
+        attackName = m_daggerAttackThird.GetComponent<DamageObject>().HitInfo.attackName;
+        m_attackArray.Add(attackName, m_daggerAttackThird);
+
+        // ‘åŒ•ˆê’i–ÚUŒ‚“o˜^
+        attackName = m_greatswordAttackFirst.GetComponent<DamageObject>().HitInfo.attackName;
+        m_attackArray.Add(attackName, m_greatswordAttackFirst);
+        // ‘åŒ•“ñ’i–ÚUŒ‚“o˜^
+        attackName = m_greatswordAttackSecond.GetComponent<DamageObject>().HitInfo.attackName;
+        m_attackArray.Add(attackName, m_greatswordAttackSecond);
+        // ‘åŒ•O’i–ÚUŒ‚“o˜^
+        attackName = m_greatswordAttackThird.GetComponent<DamageObject>().HitInfo.attackName;
+        m_attackArray.Add(attackName, m_greatswordAttackThird);
+
 
         //// ƒvƒŒƒCƒ„[ˆê’i–ÚUŒ‚‚Ì¶¬—pƒIƒuƒWƒFƒNƒg“o˜^
         //string attackStartObjName = m_playerAttackFirstStartObj.GetComponent<DamageObject>().HitInfo.attackName;

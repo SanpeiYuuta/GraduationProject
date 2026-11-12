@@ -35,10 +35,6 @@ public class PlayerStateAttackFirst : PlayerStateAttackBase
 
         m_countAttackTime += m_deltaTime;
 
-        var attackManager = GameObject.Find("AttackManager").GetComponent<AttackManager>();
-
-        var avater = m_parentObject.GetComponent<PlayerAvatar>();
-
         // 攻撃を出す
         AttackCollisionOccurs();
 
@@ -47,9 +43,9 @@ public class PlayerStateAttackFirst : PlayerStateAttackBase
         NextState();
 
         // 移動反映(移動させない)
-        m_parentObject.GetComponent<PlayerAvatar>().MoveVec = default;
+        m_playerAvatar.MoveVec = default;
         // 入力初期化
-        m_parentObject.GetComponent<PlayerAvatar>().ResetInputDetas();
+        m_playerAvatar.ResetInputDetas();
     }
 
     public override void OnExit()
@@ -57,7 +53,7 @@ public class PlayerStateAttackFirst : PlayerStateAttackBase
         base.OnExit();
     }
 
-
+    // 攻撃コリジョン発生
     protected override void AttackCollisionOccurs()
     {
         // 攻撃を出す
@@ -71,6 +67,7 @@ public class PlayerStateAttackFirst : PlayerStateAttackBase
         }
     }
 
+    // ステート移行処理
     protected override void NextState()
     {
         var attackAction = m_playerInputDetas["Attack"];
@@ -80,19 +77,19 @@ public class PlayerStateAttackFirst : PlayerStateAttackBase
         //次のステートに遷移する
         if (m_isNextAttack && m_countAttackTime >= m_graceTimeNextAttack)
         {
-            m_parentObject.GetComponent<PlayerAvatar>().GetStateMachinePlayer().ChangeState("AttackSecond");
+            m_playerAvatar.GetStateMachinePlayer().ChangeState("AttackSecond");
         }
         else if (dodgeAction.pressed && m_countAttackTime >= m_graceTimeNextAttack) // 回避状態移行
         {
             if (m_playerAvatar.CanDodgeFlag) return;
 
-            m_parentObject.GetComponent<PlayerAvatar>().GetStateMachinePlayer().ChangeState("Dodge");
+            m_playerAvatar.GetStateMachinePlayer().ChangeState("Dodge");
             m_playerAvatar.CanDodgeFlag = false;
         }
         else if (m_countAttackTime >= m_attackTimeMax)
         {
             // 攻撃が一定時間過ぎたら元のステートに戻る
-            m_parentObject.GetComponent<PlayerAvatar>().GetStateMachinePlayer().ChangeState("Walk");
+            m_playerAvatar.GetStateMachinePlayer().ChangeState("Walk");
         }
     }
 }

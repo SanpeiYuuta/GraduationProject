@@ -12,9 +12,18 @@ public class StateMachinePlayer : StateMachineBase
     {
         AddState("Walk", new PlayerStateWalk(m_parentObject, cameraObject));
         AddState("Dodge", new PlayerStateDodge(m_parentObject, cameraObject));
+        // ìÅçUåÇ(ó\íË)
         AddState("AttackFirst", new PlayerStateAttackFirst(m_parentObject, cameraObject));
         AddState("AttackSecond", new PlayerStateAttackSecond(m_parentObject, cameraObject));
         AddState("AttackThird", new PlayerStateAttackThird(m_parentObject, cameraObject));
+        // É_ÉKÅ[çUåÇ
+        AddState("DaggerFirst", new DaggerFirst(m_parentObject, cameraObject));
+        AddState("DaggerSecond", new DaggerSecond(m_parentObject, cameraObject));
+        AddState("DaggerThird", new DaggerThird(m_parentObject, cameraObject));
+        // ëÂåïçUåÇ
+        AddState("GreatswordFirst", new GreatswordFirst(m_parentObject, cameraObject));
+        AddState("GreatswordSecond", new GreatswordSecond(m_parentObject, cameraObject));
+        AddState("GreatswordThird", new GreatswordThird(m_parentObject, cameraObject));
         ChangeState("Walk");
     }
 

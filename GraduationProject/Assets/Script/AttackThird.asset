@@ -16,6 +16,6 @@ MonoBehaviour:
   attackType: 0
   stunTime: 0
   hitStopTime: 0
-  attackPower: 3
+  attackPower: 10
   knockbackForce: 0
   knockbackDirection: {x: 0, y: 0, z: 0}

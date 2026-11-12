@@ -43,6 +43,7 @@ public class PlayerStateAttackThird : PlayerStateAttackBase
         NextState();
     }
 
+    // 攻撃コリジョン発生
     protected override void AttackCollisionOccurs()
     {
         // 攻撃を出す
@@ -55,12 +56,13 @@ public class PlayerStateAttackThird : PlayerStateAttackBase
         }
     }
 
+    // ステート移行処理
     protected override void NextState()
     {
         // 攻撃が一定時間過ぎたら元のステートに戻る
         if (m_countAttackTime >= m_attackTimeMax)
         {
-            m_parentObject.GetComponent<PlayerAvatar>().GetStateMachinePlayer().ChangeState("Walk");
+            m_playerAvatar.GetStateMachinePlayer().ChangeState("Walk");
         }
     }
 }
