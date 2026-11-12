@@ -6,8 +6,11 @@ using UnityEngine.InputSystem;
 /// プレイヤー用のステートベースクラス　これを親としてプレイヤー用のステートを作る
 /// </summary>
 
-public class PlayerStateBase : StateBase
+public abstract class PlayerStateBase : StateBase
 {
+    // 親オブジェクトアバター
+    protected PlayerAvatar m_playerAvatar;
+
     protected Dictionary<string, InputAction> m_playerInputActions = new Dictionary<string, InputAction>();
     protected Dictionary<string, InputDeta> m_playerInputDetas = new Dictionary<string, InputDeta>();
 
@@ -27,9 +30,9 @@ public class PlayerStateBase : StateBase
     public override void OnEnter()
     {
         // プレイヤー操作用のInputActionを取得
-        var playerAvatar = m_parentObject.GetComponent<PlayerAvatar>();
-        m_playerInputActions = playerAvatar.GetInputActions();
-        m_playerInputDetas = playerAvatar.GetInputDetas();
+        m_playerAvatar = m_parentObject.GetComponent<PlayerAvatar>();
+        m_playerInputActions = m_playerAvatar.GetInputActions();
+        m_playerInputDetas = m_playerAvatar.GetInputDetas();
 
         base.OnEnter();
     }

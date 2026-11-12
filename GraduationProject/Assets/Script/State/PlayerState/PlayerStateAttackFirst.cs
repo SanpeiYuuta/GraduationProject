@@ -40,37 +40,11 @@ public class PlayerStateAttackFirst : PlayerStateAttackBase
         var avater = m_parentObject.GetComponent<PlayerAvatar>();
 
         // 攻撃を出す
-        if (m_countAttackTime >= m_attackTimeMaxFirst && !m_attackCollisionFlag)
-        {
-            // プレイヤーの前方に攻撃オブジェクトを生成
-            Vector3 createPos = m_parentObject.transform.position + m_parentObject.transform.forward * 1.0f;
-            var damegeObj = attackManager.CreateAttackObjectNetwork("PlayerAttackFirst", m_parentObject, createPos);
-
-            m_attackCollisionFlag = true;
-        }
+        AttackCollisionOccurs();
 
         // 次の攻撃に移行してよいか確認をする
-        var attackAction = m_playerInputDetas["Attack"];
-        var dodgeAction = m_playerInputDetas["Dodge"];
-        if (attackAction.pressed) m_isNextAttack = true;
-
-        //次のステートに遷移する
-        if(m_isNextAttack && m_countAttackTime >= m_graceTimeNextAttack)
-        {
-            m_parentObject.GetComponent<PlayerAvatar>().GetStateMachinePlayer().ChangeState("AttackSecond");
-        }
-        else if(dodgeAction.pressed && m_countAttackTime >= m_graceTimeNextAttack) // 回避状態移行
-        {
-            if (!avater.CanDodgeFlag) return;
-
-            m_parentObject.GetComponent<PlayerAvatar>().GetStateMachinePlayer().ChangeState("Dodge");
-            avater.CanDodgeFlag = false;
-        }
-        else if (m_countAttackTime >= m_attackTimeMax)
-        {
-            // 攻撃が一定時間過ぎたら元のステートに戻る
-            m_parentObject.GetComponent<PlayerAvatar>().GetStateMachinePlayer().ChangeState("Walk");
-        }
+        NextAttackFlag(true);
+        NextState();
 
         // 移動反映(移動させない)
         m_parentObject.GetComponent<PlayerAvatar>().MoveVec = default;
@@ -83,4 +57,42 @@ public class PlayerStateAttackFirst : PlayerStateAttackBase
         base.OnExit();
     }
 
+
+    protected override void AttackCollisionOccurs()
+    {
+        // 攻撃を出す
+        if (m_countAttackTime >= m_attackTimeMaxFirst && !m_attackCollisionFlag)
+        {
+            // プレイヤーの前方に攻撃オブジェクトを生成
+            Vector3 createPos = m_parentObject.transform.position + m_parentObject.transform.forward * 1.0f;
+            var damegeObj = m_attackManager.CreateAttackObjectNetwork("PlayerAttackFirst", m_parentObject, createPos);
+
+            m_attackCollisionFlag = true;
+        }
+    }
+
+    protected override void NextState()
+    {
+        var attackAction = m_playerInputDetas["Attack"];
+        var dodgeAction = m_playerInputDetas["Dodge"];
+        if (attackAction.pressed) m_isNextAttack = true;
+
+        //次のステートに遷移する
+        if (m_isNextAttack && m_countAttackTime >= m_graceTimeNextAttack)
+        {
+            m_parentObject.GetComponent<PlayerAvatar>().GetStateMachinePlayer().ChangeState("AttackSecond");
+        }
+        else if (dodgeAction.pressed && m_countAttackTime >= m_graceTimeNextAttack) // 回避状態移行
+        {
+            if (m_playerAvatar.CanDodgeFlag) return;
+
+            m_parentObject.GetComponent<PlayerAvatar>().GetStateMachinePlayer().ChangeState("Dodge");
+            m_playerAvatar.CanDodgeFlag = false;
+        }
+        else if (m_countAttackTime >= m_attackTimeMax)
+        {
+            // 攻撃が一定時間過ぎたら元のステートに戻る
+            m_parentObject.GetComponent<PlayerAvatar>().GetStateMachinePlayer().ChangeState("Walk");
+        }
+    }
 }

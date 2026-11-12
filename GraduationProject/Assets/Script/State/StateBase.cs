@@ -4,7 +4,7 @@ using UnityEngine;
 /// 攻撃の状態を管理する基底クラス(ステート)
 /// </summary>
 
-public class StateBase
+public abstract class StateBase
 {
     // 親オブジェクト
     protected NetworkObject m_parentObject;
@@ -21,7 +21,7 @@ public class StateBase
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public virtual void OnEnter()
     {
-        
+
     }
 
     // Update is called once per frame

@@ -532,6 +532,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -6868645056777295161, guid: 55c20457d610454469c37d564176444a, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: f1c2677fb38739a42a4a17569150cd7a, type: 2}
     - target: {fileID: 919132149155446097, guid: 55c20457d610454469c37d564176444a, type: 3}
       propertyPath: m_Name
       value: Armature

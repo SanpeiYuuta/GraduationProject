@@ -35,21 +35,28 @@ public class PlayerStateAttackThird : PlayerStateAttackBase
         m_countAttackTime += m_deltaTime;
 
         var attackManager = GameObject.Find("AttackManager").GetComponent<AttackManager>();
-        
+
+        // 攻撃を出す
+        AttackCollisionOccurs();
+
+        // 次のステート移行処理
+        NextState();
+    }
+
+    protected override void AttackCollisionOccurs()
+    {
         // 攻撃を出す
         if (m_countAttackTime >= m_attackTimeMaxFirst && !m_attackCollisionFlag)
         {
             // プレイヤーの前方に攻撃オブジェクトを生成
             Vector3 createPos = m_parentObject.transform.position + m_parentObject.transform.forward * 1.0f;
-            var damegeObj = attackManager.CreateAttackObjectNetwork("PlayerAttackThird", m_parentObject, createPos);
+            var damegeObj = m_attackManager.CreateAttackObjectNetwork("PlayerAttackThird", m_parentObject, createPos);
             m_attackCollisionFlag = true;
         }
-        
-        // 次の攻撃に移行してよいか確認をする
-        var attackAction = m_playerInputDetas["Attack"];
-        var dodgeAction = m_playerInputDetas["Dodge"];
-        if (attackAction.pressed) m_isNextAttack = true;
-        
+    }
+
+    protected override void NextState()
+    {
         // 攻撃が一定時間過ぎたら元のステートに戻る
         if (m_countAttackTime >= m_attackTimeMax)
         {
