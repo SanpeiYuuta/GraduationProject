@@ -1,15 +1,22 @@
+using Fusion;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 /// <summary>
 /// バトル中のUIを管理するクラス
 /// </summary>
 public class BattleUIManager : MonoBehaviour
 {
+    // プレイヤー
+    private NetworkObject m_player = null;
+
     [SerializeField] TextMeshProUGUI m_battleStartUI; // バトル中のUIのオブジェクト
     [SerializeField] TextMeshProUGUI m_battlePreparation; // バトル準備中のUIのオブジェクト
     [SerializeField] TextMeshProUGUI m_battleGameSetUI; // バトル準備中のUIのオブジェクト
     [SerializeField] TextMeshProUGUI m_battleWinerUI; // 勝者が分かるUI
     [SerializeField] GameObject m_reStartButton; // リスタート用のボタン
+
+    [SerializeField] Image m_barrierEnergy; // バリア用のエネルギーゲージ
 
     private E_GamePhase m_gamePhase = E_GamePhase.None; // ゲームのフェーズ
     private E_GamePhase m_beforGamePhase = E_GamePhase.None; // 前フレームのゲームのフェーズ
@@ -19,7 +26,7 @@ public class BattleUIManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -136,5 +143,19 @@ public class BattleUIManager : MonoBehaviour
                 break;
         }
 
+    }
+
+    // プレイヤーを設定するセッタ
+    public void SetPlayer(NetworkObject player)
+    {
+        // 既に設定されている場合は、再設定しない
+        if (m_player) return;
+
+        m_player = player;
+    }
+
+    public NetworkObject PlayerObj
+    {
+        get { return m_player; }
     }
 }

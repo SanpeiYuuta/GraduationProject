@@ -41,6 +41,8 @@ public class PlayerStateAttackThird : PlayerStateAttackBase
 
         // 次のステート移行処理
         NextState();
+        // 入力初期化
+        m_playerAvatar.ResetInputDetas();
     }
 
     // 攻撃コリジョン発生

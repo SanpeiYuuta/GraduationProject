@@ -6,6 +6,15 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
 
+// 武器を識別するためのenum
+public enum E_weapon
+{
+    None = 0,
+    Katana,
+    Dagger,
+    Greatsword
+}
+
 // 入力についてのデータ構造
 public class InputDeta
 {
@@ -19,11 +28,25 @@ public class InputDeta
     }
 }
 
+// 武器の所持クラスについて
+public class Loadout
+{
+    // 現在装備している武器のリスト
+    public List<E_weapon> m_gearWeaponList = new List<E_weapon>();
+
+    // 現在選択している武器の番号
+    public int m_currentWeaponNum;
+}
+
+
 public class PlayerAvatar : NetworkBehaviour
 {
     // ステータス
     [Networked] public int m_hp { get; set; } = 3; // HP
     private int m_maxHp = 3; // 最大HP
+
+    [SerializeField] float m_maxBarrierEnergy = 100.0f; // エネルギー
+    private float m_currentBarrierEnergy = 100.0f; // 現在のエネルギー
 
     bool m_active = false;
 
@@ -60,6 +83,8 @@ public class PlayerAvatar : NetworkBehaviour
     private InputAction m_dodgeAction;
     private InputAction m_dashAction;
     private InputAction m_attackAction;
+    private InputAction m_barrierAction;
+    private InputAction m_weaponChangeAction;
 
     // 入力処理
     private bool m_attackPressed = false;
@@ -74,7 +99,15 @@ public class PlayerAvatar : NetworkBehaviour
     [SerializeField] float m_maxDodgeCoolTime = 1.0f; // 回避のクールタイム
     private float m_countDodgeCoolTime = 0.0f; // 回避のクールタイムカウント
 
+    // 子オブジェクト
+    private GameObject m_barrier;
+
     GameObject m_camera;
+
+    // 装備
+    Loadout m_playerLoadout = new Loadout();
+    // 前フレームに押していたボタンのベクトル
+    Vector2 m_beforPlayerWeaponChangeVec = Vector2.zero;
 
     // 攻撃用のステートマシン
     //private StateMachineShot m_stateMachineAttack;
@@ -87,6 +120,10 @@ public class PlayerAvatar : NetworkBehaviour
     // これがフォトンのビヘイビアにとってのStart()
     public override void Spawned()
     {
+        // 初期化
+        m_hp = m_maxHp;
+        m_currentBarrierEnergy = m_maxBarrierEnergy;
+
         m_startPos = transform.position; // 初期位置を保存
 
         m_id = Runner.SessionInfo.PlayerCount;
@@ -94,7 +131,7 @@ public class PlayerAvatar : NetworkBehaviour
         //m_characterController = GetComponent<NetworkCharacterController>();
         m_animator = GetComponent<NetworkMecanimAnimator>();
 
-        // MoveとJumpのアクションを取得
+        // アクションの取得
         m_moveAction = InputSystem.actions.FindAction("Move");
         m_inputActions.Add("Move", m_moveAction);
         m_dodgeAction = InputSystem.actions.FindAction("Dodge");
@@ -105,6 +142,11 @@ public class PlayerAvatar : NetworkBehaviour
         m_attackAction = InputSystem.actions.FindAction("Attack");
         m_inputActions.Add("Attack", m_attackAction);
         m_inputDetas.Add("Attack", new InputDeta { pressed = false, released = false });
+        m_barrierAction = InputSystem.actions.FindAction("Barrier");
+        m_inputActions.Add("Barrier", m_barrierAction);
+        m_inputDetas.Add("Barrier", new InputDeta { pressed = false, released = false });
+        m_weaponChangeAction = InputSystem.actions.FindAction("WeaponChange");
+        m_inputActions.Add("WeponChange", m_weaponChangeAction);
 
         // ↓これはInputSystemのアクションマップを使用しない場合の例
         // 直接コードでアクションを書くときはこうなる
@@ -144,6 +186,9 @@ public class PlayerAvatar : NetworkBehaviour
         // 行動用のステートマシン作成
         m_stateMachinePlayer = new StateMachinePlayer(Object, m_camera);
 
+        // 装備の初期化
+        StartWeapon();
+
         // ボタンに対して自分を登録する
         var reStartButton = GameObject.Find("Canvas");
         Debug.Log(reStartButton);
@@ -152,6 +197,12 @@ public class PlayerAvatar : NetworkBehaviour
         // 攻撃マネージャーに対して自分を登録する
         var attackManagerObj = GameObject.Find("AttackManager");
         attackManagerObj.GetComponent<AttackManager>().SetPlayer(Object);
+        // UIマネージャーにも自分を登録する
+        var uiManagerObj = GameObject.Find("BattleUIManager");
+        uiManagerObj.GetComponent<BattleUIManager>().SetPlayer(Object);
+
+        // バリア取得
+        m_barrier = transform.Find("Barrier").gameObject;
     }
 
     // これがフォトンのビヘイビアにとってのUpdate()
@@ -185,6 +236,30 @@ public class PlayerAvatar : NetworkBehaviour
                 Debug.Log("回避可能");
                 m_canDodgeFlag = true;
                 m_countDodgeCoolTime = 0.0f;
+            }
+        }
+
+        // バリアが有効化されている限りエネルギーは消費される
+        if (m_barrier.activeSelf)
+        {
+            m_currentBarrierEnergy -= 10.0f * delta; // エネルギーを消費する
+            Debug.Log("バリアエネルギー" + m_currentBarrierEnergy);
+
+            // エネルギーを使い切った時
+            if (m_currentBarrierEnergy <= 0.0f)
+            {
+                Debug.Log("バリアエネルギーがなくなった");
+                m_currentBarrierEnergy = 0.0f;
+                m_barrier.SetActive(false); // バリアを無効化する
+            }
+        }
+        else if(!m_barrier.activeSelf)
+        {
+            m_currentBarrierEnergy += 8.0f * delta; // エネルギーを回復する
+
+            if(m_currentBarrierEnergy > m_maxBarrierEnergy)
+            {
+                m_currentBarrierEnergy = m_maxBarrierEnergy; // エネルギーを最大値に制限する
             }
         }
 
@@ -232,6 +307,34 @@ public class PlayerAvatar : NetworkBehaviour
             if (inputAction.WasReleasedThisFrame())
             {
                 inputStruct.released = true;
+            }
+        }
+
+        // 持っている武器を変更する
+        var weponChangeValue = m_weaponChangeAction.ReadValue<Vector2>();
+        if (weponChangeValue != m_beforPlayerWeaponChangeVec)
+        {
+            m_beforPlayerWeaponChangeVec = weponChangeValue;
+
+            int maxNum = m_playerLoadout.m_gearWeaponList.Count - 1;
+            int minNum = 0;
+            int currentNum = m_playerLoadout.m_currentWeaponNum;
+            int changeNum = currentNum + (int)weponChangeValue.x;
+            
+            if (changeNum < minNum)
+            {
+                // 選択している装備が最小より小さいと
+                m_playerLoadout.m_currentWeaponNum = maxNum;
+            }
+            else if(changeNum > maxNum)
+            {
+                // 選択している装備が最大より大きいと
+                m_playerLoadout.m_currentWeaponNum = minNum;
+            }
+            else
+            {
+                // 問題ないとき
+                m_playerLoadout.m_currentWeaponNum = changeNum;
             }
         }
     }
@@ -322,6 +425,45 @@ public class PlayerAvatar : NetworkBehaviour
         set { m_canDodgeFlag = value; }
     }
 
+    // バリアの表示状態のゲッタ
+    public bool GetBarrierActive
+    {
+        get { return m_barrier.activeSelf; }
+    }
+
+    // 現在のバリアエネルギー
+    public float CurrentBarrierEnergy
+    {
+        get { return m_currentBarrierEnergy; }
+        set { m_currentBarrierEnergy = Mathf.Clamp(value, 0.0f, m_maxBarrierEnergy); } // エネルギーを0から最大値の範囲に制限
+    }
+
+    // 最大のバリアエネルギー(読み取り専用)
+    public float MaxBarrierEnergy
+    {
+        get { return m_maxBarrierEnergy; }
+    }
+
+    // バリアの有効、無効化
+    public void SetBarrierActive(bool active)
+    {
+        // エネルギーが20以上ないとバリアを有効化できない
+        if (m_currentBarrierEnergy < 20 && active) return;
+
+        m_barrier.SetActive(active);
+    }
+
+    // 装備の初期化
+    private void StartWeapon()
+    {
+        m_playerLoadout.m_currentWeaponNum = 0;
+
+        // 一旦近接全部装備させて切り替えがうまくいっているか確認する
+        m_playerLoadout.m_gearWeaponList.Add(E_weapon.Katana);
+        m_playerLoadout.m_gearWeaponList.Add(E_weapon.Dagger);
+        m_playerLoadout.m_gearWeaponList.Add(E_weapon.Greatsword);
+    }
+
     // 攻撃を受けるときの関数
     [Rpc(RpcSources.All,RpcTargets.StateAuthority)]
     public void DamegeRpc(string attackName)
@@ -335,8 +477,33 @@ public class PlayerAvatar : NetworkBehaviour
         // 攻撃データの取得
         var attackDeta = attackManager.GetAttackDeta(attackName);
 
+        // バリアを貼っているとダメージは受けない
+        if(m_barrier.activeSelf)
+        {
+            Debug.Log("バリアで防いだ");
+            var attackType = attackDeta.attackType;
+            if(attackType == AttackType.Melee)
+            {
+                // 近接ならバリアダメージ2倍
+                m_currentBarrierEnergy -= attackDeta.attackPower * 2; // バリアエネルギーを減らす
+                return;
+            }
+            else if(attackType == AttackType.Ranged)
+            {
+                // 遠隔ならバリアダメージ半分
+                m_currentBarrierEnergy -= attackDeta.attackPower / 2; // バリアエネルギーを減らす
+                return;
+            }
+        }
+
         Debug.Log("ダメージを受けた");
         m_hp -= attackDeta.attackPower;
+    }
+
+    // プレイヤーの装備ゲッタ
+    public Loadout GetPlayerLoadout()
+    {
+        return m_playerLoadout;
     }
 
     public StateMachinePlayer GetStateMachinePlayer()

@@ -36,6 +36,8 @@ public class DaggerThird : PlayerStateAttackBase
 
         // 次のステート移行処理
         NextState();
+        // 入力初期化
+        m_playerAvatar.ResetInputDetas();
     }
 
     public override void OnExit()

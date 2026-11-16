@@ -51,7 +51,10 @@ public class PlayerStateDodge : PlayerStateBase
         moveVec.x = Mathf.Cos(m_startTotalAngle) * dodgeSpeed * cosCurve;
         moveVec.z = -Mathf.Sin(m_startTotalAngle) * dodgeSpeed * cosCurve;
 
+        // ˆÚ“®”½‰f
         m_parentObject.GetComponent<PlayerAvatar>().MoveVec = moveVec;
+        // “ü—Í‰Šú‰»
+        m_playerAvatar.ResetInputDetas();
     }
 
     public override void OnExit()

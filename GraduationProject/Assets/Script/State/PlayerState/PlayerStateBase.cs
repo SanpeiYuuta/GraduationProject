@@ -65,6 +65,12 @@ public abstract class PlayerStateBase : StateBase
         m_directionVec.Normalize();
         playerAvatar.directionVec = m_directionVec;
 
+        // バリア表示非表示
+        if (m_playerInputDetas["Barrier"].pressed)
+        {
+            var barrierActive = playerAvatar.GetBarrierActive;
+            playerAvatar.SetBarrierActive(!barrierActive);
+        }
     }
 
     public override void OnExit()
