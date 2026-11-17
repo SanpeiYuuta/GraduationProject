@@ -124,26 +124,40 @@ public class CameraMove : MonoBehaviour
         transform.eulerAngles += new Vector3(angleY, angle) * delta;//回転させる
 
         var cameraPos = m_cameraObject.GetComponent<Transform>().position;
+        cameraPos = transform.position + transform.rotation *
+                Vector3.Scale(new Vector3(1.0f, 1.0f, 1.0f), new Vector3(0.0f, 0.0f, -10));
+
         var rayDirectionVec = cameraPos - originPos;
-        Debug.Log("カメラの位置："+cameraPos);
+        float rayDistance = rayDirectionVec.magnitude;
+        //Debug.Log("カメラの位置："+cameraPos);
         
         // レイを出す
         Debug.DrawRay(originPos,rayDirectionVec, new Color(0.0f, 1.0f, 0.0f, 1.0f));
         Ray ray = new Ray(originPos, rayDirectionVec);
 
         RaycastHit rayHit;
-        if(Physics.Raycast(ray,out rayHit))
+        if(Physics.Raycast(ray,out rayHit, rayDistance))
         {
             var hitObj = rayHit.collider.gameObject;
             if (hitObj.tag == "Obstacle")
             {
-                cameraPos = hitObj.transform.position;
+                cameraPos = rayHit.point;
                 m_cameraObject.GetComponent<Transform>().position = cameraPos;
             }
         }
+        else
+        {
+            Debug.Log("レイにヒットしていない");
 
-        //Debug.Log("カメラの移動入力" + angle);
+            Vector3 pushPos = new Vector3(0.0f, 0.0f, -10.0f);
 
+            // 子オブジェクトとして追従しているような動きにする
+            pos = transform.position + transform.rotation * 
+                Vector3.Scale(transform.lossyScale, pushPos);
+            
+            //中心点からrangeの数値分距離を離す
+            m_cameraObject.GetComponent<Transform>().position = pos;
+        }
 
         //スティックの押し込みでPlayerの向いている方向に回り込む
         MovePlayerAngle();
