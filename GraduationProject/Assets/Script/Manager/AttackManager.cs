@@ -30,6 +30,9 @@ public class AttackManager : MonoBehaviour
     // 大剣の三段目攻撃
     [SerializeField] GameObject m_greatswordAttackThird;
 
+    // 魔法弾
+    [SerializeField] GameObject m_magicBullet;
+
     // 攻撃の情報を保管するためのプレハブ
     [SerializeField] NetworkObject m_playerAttackStartObj;
 
@@ -79,6 +82,9 @@ public class AttackManager : MonoBehaviour
         attackName = m_greatswordAttackThird.GetComponent<DamageObject>().HitInfo.attackName;
         m_attackArray.Add(attackName, m_greatswordAttackThird);
 
+        // 魔法弾登録
+        attackName = "MagicBullet";
+        m_attackArray.Add(attackName, m_magicBullet);
 
         //// プレイヤー一段目攻撃の生成用オブジェクト登録
         //string attackStartObjName = m_playerAttackFirstStartObj.GetComponent<DamageObject>().HitInfo.attackName;
@@ -143,14 +149,32 @@ public class AttackManager : MonoBehaviour
             // 親オブジェクト渡す
             attackStartObj.ParentObj = parentObj;
         });
-        //startAttackObj.GetComponent<AttackStartObj>().AttackName = "12345678901234567890";
-        //startAttackObj.GetComponent<AttackStartObj>().AttackName += "1234567890";
-        //startAttackObj.GetComponent<AttackStartObj>().AttackName = attackName;
-
-       // Debug.Log($"attackName：{startAttackObj.GetComponent<AttackStartObj>().AttackName}");
 
         return startAttackObj;
     }
+
+    // ステージに弾丸オブジェクトを生成する(ネットワーク版)
+    // attackName：生成したい攻撃オブジェクトの名前
+    // createPos：生成した際の位置 デフォルト値(0,0,0)
+    // createQt：生成した際の回転 デフォルト値null 実質Quaternion.identity
+    public NetworkObject CreateBulletObjectNetwork(string attackName, NetworkObject parentObj, Vector3 createPos = default, Quaternion? createQt = null)
+    {
+        // エラー
+        if (!m_attackArray.TryGetValue(attackName, out var prefab))
+        {
+            Debug.LogWarning($"攻撃オブジェクトが見つかりません：{attackName}");
+            return null;
+        }
+
+        // createQtがnullの場合はQuaternion.identityにする
+        var qt = createQt ?? Quaternion.identity;
+
+        var startAttackObj = m_player.Runner.Spawn(m_magicBullet, createPos, qt);
+        startAttackObj.GetComponent<MagicBullet>().SetParentObj(parentObj);
+
+        return startAttackObj;
+    }
+
 
     // 攻撃プレハブの取得
     // 取得したい攻撃プレハブの名前

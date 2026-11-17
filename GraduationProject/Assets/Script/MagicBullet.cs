@@ -7,6 +7,9 @@ using UnityEngine;
 
 public class MagicBullet : NetworkBehaviour
 {
+    // 攻撃情報
+    [SerializeField] AttackDeta m_hitInfo;
+
     private float m_speed = 12.0f; // 魔弾の速度
 
     private Vector3 m_startPos; // 生成されたときの位置
@@ -59,7 +62,6 @@ public class MagicBullet : NetworkBehaviour
         // 移動距離が0以下になったら消滅する
         if (m_moveDistance <= 0)
         {
-            Debug.Log("魔弾が消滅しました");
             //var player = m_parentObj.GetComponent<PlayerAvatar>();
             Runner.Despawn(Object);
             return;
@@ -87,7 +89,7 @@ public class MagicBullet : NetworkBehaviour
         {
             // プレイヤーにダメージを与える処理をここに追加
             var player = other.gameObject.GetComponent<PlayerAvatar>();
-            player.HP -= 1;
+            player.DamegeRpc(m_hitInfo.attackName); // ダメージを与える
         }
     }
 

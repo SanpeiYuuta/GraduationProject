@@ -75,13 +75,13 @@ public class PlayerStateAttackFirst : PlayerStateAttackBase
         if (attackAction.pressed) m_isNextAttack = true;
 
         //次のステートに遷移する
-        if (m_isNextAttack && m_countAttackTime >= m_graceTimeNextAttack)
+        else if (m_isNextAttack && m_countAttackTime >= m_graceTimeNextAttack)
         {
             m_playerAvatar.GetStateMachinePlayer().ChangeState("AttackSecond");
         }
-        else if (dodgeAction.pressed && m_countAttackTime >= m_graceTimeNextAttack) // 回避状態移行
+        if (dodgeAction.pressed && m_countAttackTime >= m_graceTimeNextAttack) // 回避状態移行
         {
-            if (m_playerAvatar.CanDodgeFlag) return;
+            if (!m_playerAvatar.CanDodgeFlag) return;
 
             m_playerAvatar.GetStateMachinePlayer().ChangeState("Dodge");
             m_playerAvatar.CanDodgeFlag = false;

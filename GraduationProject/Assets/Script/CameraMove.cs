@@ -84,9 +84,10 @@ public class CameraMove : MonoBehaviour
             m_rad = m_deg * Mathf.PI / 180;//ディグリーをラジアンにする
 
             //中心点の座標取得して自分もその座標にする
+            Debug.Log("オリジンオブジェクト：" + m_originObject);
             originPos = m_originObject.GetComponent<Transform>().position;
             originPos.y = m_height;
-            GetComponent<Transform>().position = originPos;
+            transform.position = originPos;
 
 
             //中心点からrangeの数値分距離を離す
@@ -104,20 +105,42 @@ public class CameraMove : MonoBehaviour
         //中心点の座標取得して自分もその座標にする
         originPos = m_originObject.GetComponent<Transform>().position;
         originPos.y = m_height;
-        GetComponent<Transform>().position = originPos;
+        transform.position = originPos;
 
         //デルタタイム取得
         float delta = Time.deltaTime;
         //スティックの傾きによって角度を追加する
         var cameraMoveValue = m_cameraMove.ReadValue<Vector2>();
         float addAngle = cameraMoveValue.x; // 右スティックの右左の入力を取得
+        float addAngleY = -cameraMoveValue.y; // 右スティックの上下入力を取得
 
         //スティックのデットゾーンを決める
         addAngle = DeadZone(addAngle);
+        addAngleY = DeadZone(addAngleY);
 
         //スティックの傾きによってカメラの向きを回転させる
         float angle = (addAngle * m_speed);
-        transform.eulerAngles += new Vector3(0.0f, angle) * delta;//回転させる
+        float angleY = (addAngleY * m_speed);
+        transform.eulerAngles += new Vector3(angleY, angle) * delta;//回転させる
+
+        var cameraPos = m_cameraObject.GetComponent<Transform>().position;
+        var rayDirectionVec = cameraPos - originPos;
+        Debug.Log("カメラの位置："+cameraPos);
+        
+        // レイを出す
+        Debug.DrawRay(originPos,rayDirectionVec, new Color(0.0f, 1.0f, 0.0f, 1.0f));
+        Ray ray = new Ray(originPos, rayDirectionVec);
+
+        RaycastHit rayHit;
+        if(Physics.Raycast(ray,out rayHit))
+        {
+            var hitObj = rayHit.collider.gameObject;
+            if (hitObj.tag == "Obstacle")
+            {
+                cameraPos = hitObj.transform.position;
+                m_cameraObject.GetComponent<Transform>().position = cameraPos;
+            }
+        }
 
         //Debug.Log("カメラの移動入力" + angle);
 

@@ -93,6 +93,9 @@ public class PlayerStateWalk : PlayerStateBase
             case E_weapon.Greatsword:
                 myState.ChangeState("GreatswordFirst");
                 break;
+            case E_weapon.MagicBullet:
+                myState.ChangeState("BulletAttack");
+                break;
             default:
                 break;
         }

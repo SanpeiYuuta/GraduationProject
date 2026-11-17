@@ -72,7 +72,7 @@ public class GreatswordSecond : PlayerStateAttackBase
         }
         else if (dodgeAction.pressed && m_countAttackTime >= m_graceTimeNextAttack) // ‰ñ”ğó‘ÔˆÚs
         {
-            if (m_playerAvatar.CanDodgeFlag) return;
+            if (!m_playerAvatar.CanDodgeFlag) return;
 
             m_playerAvatar.GetStateMachinePlayer().ChangeState("Dodge");
             m_playerAvatar.CanDodgeFlag = false;

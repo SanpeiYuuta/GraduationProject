@@ -71,7 +71,7 @@ public class DaggerFirst : PlayerStateAttackBase
         }
         else if (dodgeAction.pressed && m_countAttackTime >= m_graceTimeNextAttack) // ‰ñ”ğó‘ÔˆÚs
         {
-            if (m_playerAvatar.CanDodgeFlag) return;
+            if (!m_playerAvatar.CanDodgeFlag) return;
 
             m_parentObject.GetComponent<PlayerAvatar>().GetStateMachinePlayer().ChangeState("Dodge");
             m_playerAvatar.CanDodgeFlag = false;

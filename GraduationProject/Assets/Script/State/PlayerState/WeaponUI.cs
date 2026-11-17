@@ -8,6 +8,7 @@ public class WeaponUI : MonoBehaviour
     [SerializeField] Sprite m_katana; // 刀アイコン
     [SerializeField] Sprite m_dagger; // 短剣アイコン
     [SerializeField] Sprite m_greatsword; // 大剣アイコン
+    [SerializeField] Sprite m_magicBullet; // 魔法弾アイコン
 
     private NetworkObject m_player; // プレイヤー(自機)
 
@@ -49,6 +50,9 @@ public class WeaponUI : MonoBehaviour
                 break;
             case E_weapon.Greatsword:
                 image.sprite = m_greatsword;
+                break;
+            case E_weapon.MagicBullet:
+                image.sprite = m_magicBullet;
                 break;
 
         }

@@ -12,7 +12,8 @@ public enum E_weapon
     None = 0,
     Katana,
     Dagger,
-    Greatsword
+    Greatsword,
+    MagicBullet
 }
 
 // 入力についてのデータ構造
@@ -462,6 +463,7 @@ public class PlayerAvatar : NetworkBehaviour
         m_playerLoadout.m_gearWeaponList.Add(E_weapon.Katana);
         m_playerLoadout.m_gearWeaponList.Add(E_weapon.Dagger);
         m_playerLoadout.m_gearWeaponList.Add(E_weapon.Greatsword);
+        m_playerLoadout.m_gearWeaponList.Add(E_weapon.MagicBullet);
     }
 
     // 攻撃を受けるときの関数

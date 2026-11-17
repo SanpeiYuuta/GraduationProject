@@ -148,6 +148,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67b40b850ea77f347ae76fd0c25d032c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MagicBullet
+  m_hitInfo: {fileID: 11400000, guid: b47d09e528ba02948b5de63cf6de4f54, type: 2}
 --- !u!114 &-1553410532481728339
 MonoBehaviour:
   m_ObjectHideFlags: 0
