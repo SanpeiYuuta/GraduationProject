@@ -147,8 +147,6 @@ public class CameraMove : MonoBehaviour
         }
         else
         {
-            Debug.Log("レイにヒットしていない");
-
             Vector3 pushPos = new Vector3(0.0f, 0.0f, -10.0f);
 
             // 子オブジェクトとして追従しているような動きにする

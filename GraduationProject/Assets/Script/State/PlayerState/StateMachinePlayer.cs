@@ -26,6 +26,8 @@ public class StateMachinePlayer : StateMachineBase
         AddState("GreatswordThird", new GreatswordThird(m_parentObject, cameraObject));
         // シューター攻撃
         AddState("BulletAttack", new StateShot(m_parentObject, cameraObject));
+        // ハンドガン腰打ち攻撃
+        AddState("HandgunHipShot", new HandgunHipShotState(m_parentObject, cameraObject));
         ChangeState("Walk");
     }
 

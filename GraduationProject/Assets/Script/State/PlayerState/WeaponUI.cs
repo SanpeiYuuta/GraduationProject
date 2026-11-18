@@ -9,6 +9,7 @@ public class WeaponUI : MonoBehaviour
     [SerializeField] Sprite m_dagger; // 短剣アイコン
     [SerializeField] Sprite m_greatsword; // 大剣アイコン
     [SerializeField] Sprite m_magicBullet; // 魔法弾アイコン
+    [SerializeField] Sprite m_handgun; // ハンドガンアイコン
 
     private NetworkObject m_player; // プレイヤー(自機)
 
@@ -53,6 +54,9 @@ public class WeaponUI : MonoBehaviour
                 break;
             case E_weapon.MagicBullet:
                 image.sprite = m_magicBullet;
+                break;
+            case E_weapon.Handgun:
+                image.sprite = m_handgun;
                 break;
 
         }

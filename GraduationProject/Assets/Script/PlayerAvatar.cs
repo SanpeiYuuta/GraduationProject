@@ -13,7 +13,8 @@ public enum E_weapon
     Katana,
     Dagger,
     Greatsword,
-    MagicBullet
+    MagicBullet,
+    Handgun
 }
 
 // 入力についてのデータ構造
@@ -86,12 +87,16 @@ public class PlayerAvatar : NetworkBehaviour
     private InputAction m_attackAction;
     private InputAction m_barrierAction;
     private InputAction m_weaponChangeAction;
+    private InputAction m_moveTypeChangeAction;
 
     // 入力処理
     private bool m_attackPressed = false;
     private bool m_attackReleased = false;
     public bool m_dodgePressed = false;
     public bool m_dodgeReleased = false;
+
+    // カメラ追従フラグ
+    private bool m_cameraFllow = false;
 
     // フラグ
     private bool m_canDodgeFlag = true; // 回避してよいかのフラグ
@@ -148,6 +153,8 @@ public class PlayerAvatar : NetworkBehaviour
         m_inputDetas.Add("Barrier", new InputDeta { pressed = false, released = false });
         m_weaponChangeAction = InputSystem.actions.FindAction("WeaponChange");
         m_inputActions.Add("WeponChange", m_weaponChangeAction);
+        m_moveTypeChangeAction = InputSystem.actions.FindAction("MoveTypeChange");
+        m_inputActions.Add("MoveTypeChange", m_moveTypeChangeAction);
 
         // ↓これはInputSystemのアクションマップを使用しない場合の例
         // 直接コードでアクションを書くときはこうなる
@@ -338,6 +345,13 @@ public class PlayerAvatar : NetworkBehaviour
                 m_playerLoadout.m_currentWeaponNum = changeNum;
             }
         }
+
+        // カメラ追従処理の更新
+        if (m_inputActions["MoveTypeChange"].WasPressedThisFrame())
+        {
+            Debug.Log("移動方法が変わったよ");
+            m_cameraFllow = !m_cameraFllow;
+        }
     }
 
     public int HP
@@ -454,6 +468,12 @@ public class PlayerAvatar : NetworkBehaviour
         m_barrier.SetActive(active);
     }
 
+    // カメラ追従のフラグ(読み取り専用)
+    public bool CameraFllow
+    {
+        get { return m_cameraFllow; }
+    }
+
     // 装備の初期化
     private void StartWeapon()
     {
@@ -464,13 +484,13 @@ public class PlayerAvatar : NetworkBehaviour
         m_playerLoadout.m_gearWeaponList.Add(E_weapon.Dagger);
         m_playerLoadout.m_gearWeaponList.Add(E_weapon.Greatsword);
         m_playerLoadout.m_gearWeaponList.Add(E_weapon.MagicBullet);
+        m_playerLoadout.m_gearWeaponList.Add(E_weapon.Handgun);
     }
 
     // 攻撃を受けるときの関数
     [Rpc(RpcSources.All,RpcTargets.StateAuthority)]
     public void DamegeRpc(string attackName)
     {
-        Debug.Log("テスト");
         // 攻撃マネージャー取得 このエラー確認方法はよろしくないので修正する予定
         var attackManagerObj = GameObject.Find("AttackManager");
         if (!attackManagerObj) return;

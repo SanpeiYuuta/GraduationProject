@@ -1,5 +1,6 @@
 using Fusion;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class PlayerStateWalk : PlayerStateBase
 {
@@ -47,19 +48,69 @@ public class PlayerStateWalk : PlayerStateBase
         Quaternion direction = new Quaternion(1.0f,1.0f,1.0f,1.0f);
         var controllerVec = m_playerInputActions["Move"].ReadValue<Vector2>();
         //Debug.Log("m_directionVec: " + m_directionVec);
-        if (dashAction.IsPressed() && controllerVec != new Vector2(0.0f,0.0f))
+
+        // カメラの向いている方向を取得
+        var cameraQt = m_camera.transform.rotation;
+        var cameraRot = m_camera.transform.eulerAngles;
+
+        // カメラ追従フラグ取得
+        bool camerafllow = m_playerAvatar.CameraFllow;
+
+        switch (camerafllow)
         {
-            // ダッシュ用のスピードの調整したのち移動更新
-            move = m_directionVec * (m_speed * 3.0f);
-            direction = Quaternion.Euler(0.0f, (m_totalAngle * Mathf.Rad2Deg) + 90.0f, 0.0f);
-            m_playerAvatar.Rotation = direction;
+            case false:
+                if (dashAction.IsPressed() && controllerVec != new Vector2(0.0f, 0.0f))
+                {
+                    // ダッシュ用のスピードの調整したのち移動更新
+                    move = m_directionVec * (m_speed * 3.0f);
+                }
+                else if (controllerVec != new Vector2(0.0f, 0.0f))
+                {
+                    // 徒歩用のスピードの調整したのち移動更新
+                    move = m_directionVec * m_speed;
+                
+                }
+                break;
+            case true:
+                if (controllerVec != new Vector2(0.0f, 0.0f))
+                {
+                    float totalSpeed = 0.0f;
+                    // 反対方向に向く動きは遅くする
+                    var dot = Vector3.Dot(m_directionVec, m_playerAvatar.transform.forward);
+                    float DecelerationRatio = 0.65f;
+                    totalSpeed = Mathf.Lerp(m_speed, m_speed * DecelerationRatio, -dot);
+                    Debug.Log(totalSpeed);
+                    //}
+
+                    // 徒歩用のスピードの調整したのち移動更新
+                    move = m_directionVec * totalSpeed;
+                }
+                break;
         }
-        else if(controllerVec != new Vector2(0.0f, 0.0f))
+
+
+        //if (dashAction.IsPressed() && controllerVec != new Vector2(0.0f,0.0f))
+        //{
+        //    // ダッシュ用のスピードの調整したのち移動更新
+        //    move = m_directionVec * (m_speed * 3.0f);
+        //}
+        //else if(controllerVec != new Vector2(0.0f, 0.0f))
+        //{
+        //    // 徒歩用のスピードの調整したのち移動更新
+        //    move = m_directionVec * m_speed;
+        //}
+
+        // プレイヤーの回転処理
+        switch(camerafllow)
         {
-            // 徒歩用のスピードの調整したのち移動更新
-            move = m_directionVec * m_speed;
-            direction = Quaternion.Euler(0.0f, (m_totalAngle * Mathf.Rad2Deg) + 90.0f, 0.0f);
-            m_playerAvatar.Rotation = direction;
+            case false:
+                direction = Quaternion.Euler(0.0f, (m_totalAngle * Mathf.Rad2Deg) + 90.0f, 0.0f);
+                m_playerAvatar.Rotation = direction;
+                break;
+            case true:
+                direction = Quaternion.Euler(0.0f, cameraRot.y, 0.0f);
+                m_playerAvatar.Rotation = direction;
+                break;
         }
 
         // 移動反映
@@ -95,6 +146,9 @@ public class PlayerStateWalk : PlayerStateBase
                 break;
             case E_weapon.MagicBullet:
                 myState.ChangeState("BulletAttack");
+                break;
+            case E_weapon.Handgun:
+                myState.ChangeState("HandgunHipShot");
                 break;
             default:
                 break;

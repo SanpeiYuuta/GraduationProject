@@ -14,7 +14,7 @@ public abstract class PlayerStateBase : StateBase
     protected Dictionary<string, InputAction> m_playerInputActions = new Dictionary<string, InputAction>();
     protected Dictionary<string, InputDeta> m_playerInputDetas = new Dictionary<string, InputDeta>();
 
-    GameObject m_camera; // カメラ
+    protected GameObject m_camera; // カメラ
 
     // 動く方向ベクトル
     protected Vector3 m_directionVec;

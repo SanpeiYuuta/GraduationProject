@@ -9,6 +9,7 @@ TagManager:
   - DamageObj
   - Camera
   - Obstacle
+  - PunchingBag
   layers:
   - Default
   - TransparentFX

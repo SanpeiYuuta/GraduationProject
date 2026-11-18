@@ -135,6 +135,16 @@
                     "interactions": "",
                     "initialStateCheck": true,
                     "priority": 0
+                },
+                {
+                    "name": "MoveTypeChange",
+                    "type": "Button",
+                    "id": "6173ccc4-7f57-4ff7-bc17-995e3c6c554e",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
                 }
             ],
             "bindings": [
@@ -564,6 +574,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "WeaponChange",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "81365091-5aeb-4f0d-bd9c-ac9223aa09dc",
+                    "path": "<Gamepad>/leftStickPress",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MoveTypeChange",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -129,7 +129,7 @@ public class BattleUIManager : MonoBehaviour
 
 
                 m_battleWinerUI.gameObject.SetActive(true);
-                m_battleWinerUI.text = $"Winer : {playerId}P"; // ŸÒ•\¦
+                m_battleWinerUI.text = $"Winner : {playerId}P"; // ŸÒ•\¦
 
 
                 break;

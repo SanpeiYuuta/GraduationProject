@@ -91,6 +91,11 @@ public class MagicBullet : NetworkBehaviour
             var player = other.gameObject.GetComponent<PlayerAvatar>();
             player.DamegeRpc(m_hitInfo.attackName); // É_ÉÅÅ[ÉWÇó^Ç¶ÇÈ
         }
+        else if (other.gameObject.tag == "PunchingBag")
+        {
+            var punchingBag = other.gameObject.GetComponent<PunchingBag>();
+            punchingBag.Damage(m_hitInfo.attackName);
+        }
     }
 
 }

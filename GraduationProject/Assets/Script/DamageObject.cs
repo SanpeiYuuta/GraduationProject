@@ -103,7 +103,11 @@ public class DamageObject : MonoBehaviour
             // プレイヤーにダメージを与える処理をここに追加
             var player = other.gameObject.GetComponent<PlayerAvatar>();
             player.DamegeRpc(m_hitInfo.attackName);
-            //player.HP -= 1; // HPを1減らす
+        }
+        else if(other.gameObject.tag == "PunchingBag")
+        {
+            var punchingBag = other.gameObject.GetComponent<PunchingBag>();
+            punchingBag.Damage(m_hitInfo.attackName);
         }
     }
 

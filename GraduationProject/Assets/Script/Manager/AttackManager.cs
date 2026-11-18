@@ -33,11 +33,16 @@ public class AttackManager : MonoBehaviour
     // –‚–@’e
     [SerializeField] GameObject m_magicBullet;
 
+    // ƒnƒ“ƒhƒKƒ“‹…
+    [SerializeField] AttackDeta m_handgunBullet;
+
     // UŒ‚‚Ìî•ñ‚ğ•ÛŠÇ‚·‚é‚½‚ß‚ÌƒvƒŒƒnƒu
     [SerializeField] NetworkObject m_playerAttackStartObj;
 
     // UŒ‚‚ğ•ÛŠÇ‚·‚é”z—ñ
     private Dictionary<string, GameObject> m_attackArray = new Dictionary<string,GameObject>();
+    // UŒ‚‚Ìƒf[ƒ^•â•ÛŠÇ‚·‚é”z—ñ
+    private Dictionary<string, AttackDeta> m_attackDetaArray = new Dictionary<string, AttackDeta>();
    // // UŒ‚‚Ì”­¶‚ğ•ÛŠÇ‚·‚é”z—ñ
    // private Dictionary<string, NetworkObject> m_startAttackArray = new Dictionary<string, NetworkObject>();
 
@@ -55,36 +60,50 @@ public class AttackManager : MonoBehaviour
         // ƒvƒŒƒCƒ„[ˆê’i–ÚUŒ‚“o˜^
         string attackName = m_playerAttackFirst.GetComponent<DamageObject>().HitInfo.attackName;
         m_attackArray.Add(attackName, m_playerAttackFirst);
+        m_attackDetaArray.Add(attackName, m_playerAttackFirst.GetComponent<DamageObject>().HitInfo);
         // ƒvƒŒƒCƒ„[“ñ’i–ÚUŒ‚“o˜^
         attackName = m_playerAttackSecond.GetComponent<DamageObject>().HitInfo.attackName;
         m_attackArray.Add(attackName, m_playerAttackSecond);
+        m_attackDetaArray.Add(attackName, m_playerAttackSecond.GetComponent<DamageObject>().HitInfo);
         // ƒvƒŒƒCƒ„[O’i–ÚUŒ‚“o˜^
         attackName = m_playerAttackThird.GetComponent<DamageObject>().HitInfo.attackName;
         m_attackArray.Add(attackName, m_playerAttackThird);
+        m_attackDetaArray.Add(attackName, m_playerAttackThird.GetComponent<DamageObject>().HitInfo);
 
         // ƒ_ƒK[ˆê’i–ÚUŒ‚“o˜^
         attackName = m_daggerAttackFirst.GetComponent<DamageObject>().HitInfo.attackName;
         m_attackArray.Add(attackName, m_daggerAttackFirst);
+        m_attackDetaArray.Add(attackName, m_daggerAttackFirst.GetComponent<DamageObject>().HitInfo);
         // ƒ_ƒK[“ñ’i–ÚUŒ‚“o˜^
         attackName = m_daggerAttackSecond.GetComponent<DamageObject>().HitInfo.attackName;
         m_attackArray.Add(attackName, m_daggerAttackSecond);
+        m_attackDetaArray.Add(attackName, m_daggerAttackSecond.GetComponent<DamageObject>().HitInfo);
         // ƒ_ƒK[O’i–ÚUŒ‚“o˜^
         attackName = m_daggerAttackThird.GetComponent<DamageObject>().HitInfo.attackName;
         m_attackArray.Add(attackName, m_daggerAttackThird);
+        m_attackDetaArray.Add(attackName, m_daggerAttackThird.GetComponent<DamageObject>().HitInfo);
 
         // ‘åŒ•ˆê’i–ÚUŒ‚“o˜^
         attackName = m_greatswordAttackFirst.GetComponent<DamageObject>().HitInfo.attackName;
         m_attackArray.Add(attackName, m_greatswordAttackFirst);
+        m_attackDetaArray.Add(attackName, m_greatswordAttackFirst.GetComponent<DamageObject>().HitInfo);
         // ‘åŒ•“ñ’i–ÚUŒ‚“o˜^
         attackName = m_greatswordAttackSecond.GetComponent<DamageObject>().HitInfo.attackName;
         m_attackArray.Add(attackName, m_greatswordAttackSecond);
+        m_attackDetaArray.Add(attackName, m_greatswordAttackSecond.GetComponent<DamageObject>().HitInfo);
         // ‘åŒ•O’i–ÚUŒ‚“o˜^
         attackName = m_greatswordAttackThird.GetComponent<DamageObject>().HitInfo.attackName;
         m_attackArray.Add(attackName, m_greatswordAttackThird);
+        m_attackDetaArray.Add(attackName, m_greatswordAttackThird.GetComponent<DamageObject>().HitInfo);
 
         // –‚–@’e“o˜^
         attackName = "MagicBullet";
         m_attackArray.Add(attackName, m_magicBullet);
+        //m_attackDetaArray.Add(attackName, m_magicBullet.GetComponent<MagicBullet>());
+
+        // ƒnƒ“ƒhƒKƒ““o˜^
+        attackName = "HandgunBullet";
+        m_attackDetaArray.Add(attackName, m_handgunBullet);
 
         //// ƒvƒŒƒCƒ„[ˆê’i–ÚUŒ‚‚Ì¶¬—pƒIƒuƒWƒFƒNƒg“o˜^
         //string attackStartObjName = m_playerAttackFirstStartObj.GetComponent<DamageObject>().HitInfo.attackName;
@@ -191,17 +210,17 @@ public class AttackManager : MonoBehaviour
     }
 
     // UŒ‚ƒf[ƒ^‚Ìæ“¾
-    // æ“¾‚µ‚½‚¢UŒ‚ƒf[ƒ^‚Ì–¼‘O
+    // attackNameFæ“¾‚µ‚½‚¢UŒ‚ƒf[ƒ^‚Ì–¼‘O
     public AttackDeta GetAttackDeta(string attackName)
     {
         // ƒGƒ‰[
-        if (!m_attackArray.TryGetValue(attackName, out var prefab))
+        if (!m_attackDetaArray.TryGetValue(attackName, out var prefab))
         {
             Debug.LogWarning($"UŒ‚ƒf[ƒ^‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñF{attackName}");
             return null;
         }
 
-        return m_attackArray[attackName].GetComponent<DamageObject>().HitInfo;
+        return m_attackDetaArray[attackName];
     }
 
     // ƒvƒŒƒCƒ„[‚ğİ’è‚·‚éƒZƒbƒ^
