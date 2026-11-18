@@ -44,7 +44,7 @@ public abstract class PlayerStateBase : StateBase
         var playerAvatar = m_parentObject.GetComponent<PlayerAvatar>();
 
         // ˆÚ“®
-        float cameraAngle = m_camera.GetComponent<CameraMove>().GetAngle(); // ƒJƒƒ‰‚ÌŠp“x‚ğ“n‚·
+        float cameraAngle = m_camera.GetComponent<CameraMoveVer2>().GetAngle(); // ƒJƒƒ‰‚ÌŠp“x‚ğ“n‚·
         //Vector2 cameraValue = new Vector2(cameraForward.x, cameraForward.z).normalized;
 
         m_moveValue = m_playerInputActions["Move"].ReadValue<Vector2>();

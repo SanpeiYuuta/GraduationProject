@@ -24,7 +24,9 @@ public class CameraMove : MonoBehaviour
 
     [SerializeField] float m_deg;//中心点から角度の方向にいるのかを管理する
     float m_rad;//ラジアン角
+    float m_radX; //ラジアン角X回転
     float m_targetDeg;//自分から見てターゲットの角度
+    float m_angleX = 0.0f; // Xの回転角度
 
     bool m_lockOn;//ロックオンするかしないかの変数
     bool m_beforeOriginObject = false;//前フレームでオリジンがちゃんと設定されているかの変数
@@ -68,8 +70,6 @@ public class CameraMove : MonoBehaviour
     // Update is called once per frame
     void LateUpdate()
     {
-        //Debug.Log("カメラターゲット対象" + m_originObject);
-
         // 追跡対象がいなければ処理を行わない
         if (!m_originObject) return;
 
@@ -84,7 +84,6 @@ public class CameraMove : MonoBehaviour
             m_rad = m_deg * Mathf.PI / 180;//ディグリーをラジアンにする
 
             //中心点の座標取得して自分もその座標にする
-            Debug.Log("オリジンオブジェクト：" + m_originObject);
             originPos = m_originObject.GetComponent<Transform>().position;
             originPos.y = m_height;
             transform.position = originPos;
@@ -121,9 +120,30 @@ public class CameraMove : MonoBehaviour
         //スティックの傾きによってカメラの向きを回転させる
         float angle = (addAngle * m_speed);
         float angleY = (addAngleY * m_speed);
-        transform.eulerAngles += new Vector3(angleY, angle) * delta;//回転させる
+        //m_rad += angle * delta;
+        //m_radX += angleY * delta;
+        m_angleX += angleY * delta;
+        var cameraRot = transform.eulerAngles;
+        cameraRot += new Vector3(angleY, angle) * delta;
 
+        // カメラ回転制限
+        if (-20.0f > m_angleX)
+        {
+            cameraRot.x = -20.0f;
+            m_angleX = -20.0f;
+        }
+        else if (20.0f < m_angleX)
+        {
+            cameraRot.x = 20.0f;
+            m_angleX = 20.0f;
+        }
+        transform.eulerAngles = cameraRot;//回転させる
+
+        // レイ関係
         var cameraPos = m_cameraObject.GetComponent<Transform>().position;
+        //cameraPos.x = originPos.x + (Mathf.Cos(m_rad) * m_range);
+        //cameraPos.z = originPos.z + (Mathf.Sin(m_rad) * m_range);
+        //cameraPos.y = m_height;
         cameraPos = transform.position + transform.rotation *
                 Vector3.Scale(new Vector3(1.0f, 1.0f, 1.0f), new Vector3(0.0f, 0.0f, -10));
 
@@ -147,14 +167,21 @@ public class CameraMove : MonoBehaviour
         }
         else
         {
+            //Vector3 pushPos = new Vector3(2.0f, -3.0f, -2.0f);
             Vector3 pushPos = new Vector3(0.0f, 0.0f, -10.0f);
 
             // 子オブジェクトとして追従しているような動きにする
-            pos = transform.position + transform.rotation * 
+            pos = transform.position + transform.rotation *
                 Vector3.Scale(transform.lossyScale, pushPos);
-            
+
+            //pos.x = originPos.x + (Mathf.Cos(m_rad) * m_range);
+            //pos.z = originPos.z + (Mathf.Sin(m_rad) * m_range);
+            //pos.y = m_height;
+
+
             //中心点からrangeの数値分距離を離す
             m_cameraObject.GetComponent<Transform>().position = pos;
+            //m_cameraObject.transform.LookAt(m_originObject.transform.position);
         }
 
         //スティックの押し込みでPlayerの向いている方向に回り込む

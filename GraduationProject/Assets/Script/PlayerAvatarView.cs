@@ -23,10 +23,11 @@ public class PlayerAvatarView : MonoBehaviour
     void Start()
     {
         // カメラを取得して、カメラの中心点をこのオブジェクトに設定する
-        m_camera = GameObject.Find("Camera");
+        m_camera = GameObject.Find("Main Camera");
         if (m_camera != null)
         {
-            m_camera.GetComponent<CameraMove>().SetOriginObject(gameObject);
+            //m_camera.GetComponent<CameraMove>().SetOriginObject(gameObject);
+            m_camera.GetComponent<CameraMoveVer2>().SetOriginObject(gameObject);
         }
 
         // アバターの初期位置を計算する(半径5の円の内部のランダムな点)

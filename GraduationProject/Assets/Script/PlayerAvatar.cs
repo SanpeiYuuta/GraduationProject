@@ -162,7 +162,7 @@ public class PlayerAvatar : NetworkBehaviour
         //m_jumpAction = new InputAction("Jump", binding: "<Gamepad>/buttonSouth");
 
         // ƒJƒƒ‰‚ğæ“¾
-        m_camera = GameObject.Find("Camera");
+        m_camera = GameObject.Find("Main Camera");
         // HPUI‚É‘Î‚µ©•ª‚ğ“n‚·
         var hpUI = GameObject.Find("PlayerHPUI");
         hpUI.GetComponent<UIPlayerHP>().SetPlayer(gameObject);
