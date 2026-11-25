@@ -63,12 +63,17 @@ public class PlayerStateWalk : PlayerStateBase
                 {
                     // ダッシュ用のスピードの調整したのち移動更新
                     move = m_directionVec * (m_speed * 3.0f);
+                    
+                    direction = Quaternion.Euler(0.0f, (m_totalAngle * Mathf.Rad2Deg) + 90.0f, 0.0f);
+                    m_playerAvatar.Rotation = direction;
                 }
                 else if (controllerVec != new Vector2(0.0f, 0.0f))
                 {
                     // 徒歩用のスピードの調整したのち移動更新
                     move = m_directionVec * m_speed;
-                
+
+                    direction = Quaternion.Euler(0.0f, (m_totalAngle * Mathf.Rad2Deg) + 90.0f, 0.0f);
+                    m_playerAvatar.Rotation = direction;
                 }
                 break;
             case true:
@@ -84,6 +89,9 @@ public class PlayerStateWalk : PlayerStateBase
 
                     // 徒歩用のスピードの調整したのち移動更新
                     move = m_directionVec * totalSpeed;
+
+                    direction = Quaternion.Euler(0.0f, cameraRot.y, 0.0f);
+                    m_playerAvatar.Rotation = direction;
                 }
                 break;
         }
@@ -100,18 +108,18 @@ public class PlayerStateWalk : PlayerStateBase
         //    move = m_directionVec * m_speed;
         //}
 
-        // プレイヤーの回転処理
-        switch(camerafllow)
-        {
-            case false:
-                direction = Quaternion.Euler(0.0f, (m_totalAngle * Mathf.Rad2Deg) + 90.0f, 0.0f);
-                m_playerAvatar.Rotation = direction;
-                break;
-            case true:
-                direction = Quaternion.Euler(0.0f, cameraRot.y, 0.0f);
-                m_playerAvatar.Rotation = direction;
-                break;
-        }
+        //// プレイヤーの回転処理
+        //switch(camerafllow)
+        //{
+        //    case false:
+        //        direction = Quaternion.Euler(0.0f, (m_totalAngle * Mathf.Rad2Deg) + 90.0f, 0.0f);
+        //        m_playerAvatar.Rotation = direction;
+        //        break;
+        //    case true:
+        //        direction = Quaternion.Euler(0.0f, cameraRot.y, 0.0f);
+        //        m_playerAvatar.Rotation = direction;
+        //        break;
+        //}
 
         // 移動反映
         avater.MoveVec = move;

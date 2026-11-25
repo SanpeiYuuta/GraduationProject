@@ -4,7 +4,7 @@ using UnityEngine;
 /// プレイヤーのステートマシン
 /// </summary>
 
-public class StateMachinePlayer : StateMachineBase
+public class StateMachinePlayer : NetObjStateMachineBase
 {
 
     // コンストラクタ

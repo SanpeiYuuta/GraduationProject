@@ -486,7 +486,7 @@ BoxCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Size: {x: 1.01, y: 1.2, z: 1.2}
   m_Center: {x: 0, y: 0, z: 0}
@@ -851,7 +851,6 @@ GameObject:
   - component: {fileID: 330585544}
   - component: {fileID: 330585547}
   - component: {fileID: 330585548}
-  - component: {fileID: 330585549}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -989,26 +988,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6206be19319fb1848b8391a88f175287, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraMoveVer2
-  m_range: 10
-  m_speed: 1.5
-  m_height: 5
-  m_originObject: {fileID: 0}
-  m_cameraObject: {fileID: 330585543}
-  m_deg: -90
---- !u!114 &330585549
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 330585543}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4d64e0bcf604514bad2e88e4873c247, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CameraMove
-  m_range: 10
-  m_speed: 90
+  m_range: 5
+  m_speed: 1.2
   m_height: 5
   m_originObject: {fileID: 0}
   m_cameraObject: {fileID: 330585543}

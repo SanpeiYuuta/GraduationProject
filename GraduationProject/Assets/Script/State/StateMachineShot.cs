@@ -1,7 +1,7 @@
 using Fusion;
 using UnityEngine;
 
-public class StateMachineShot : StateMachineBase
+public class StateMachineShot : NetObjStateMachineBase
 {
     protected GameObject m_bulletObj;
 

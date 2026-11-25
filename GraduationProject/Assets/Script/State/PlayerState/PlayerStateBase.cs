@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 /// プレイヤー用のステートベースクラス　これを親としてプレイヤー用のステートを作る
 /// </summary>
 
-public abstract class PlayerStateBase : StateBase
+public abstract class PlayerStateBase : NetStateBase
 {
     // 親オブジェクトアバター
     protected PlayerAvatar m_playerAvatar;
@@ -51,7 +51,7 @@ public abstract class PlayerStateBase : StateBase
 
         if(m_moveValue != new Vector3(0.0f,0.0f,0.0f))
         {
-            m_playerAngle = Mathf.Atan2(m_moveValue.x, m_moveValue.y);
+            m_playerAngle = Mathf.Atan2(m_moveValue.x, m_moveValue.y); // ←ｘとｙの渡し順反対じゃん
             playerAvatar.playerAngle = m_playerAngle;
             //Debug.Log("m_playerAngle: " + m_playerAngle * Mathf.Rad2Deg);
         }

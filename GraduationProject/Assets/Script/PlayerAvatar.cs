@@ -88,6 +88,7 @@ public class PlayerAvatar : NetworkBehaviour
     private InputAction m_barrierAction;
     private InputAction m_weaponChangeAction;
     private InputAction m_moveTypeChangeAction;
+    private InputAction m_adsChange;
 
     // 入力処理
     private bool m_attackPressed = false;
@@ -155,6 +156,8 @@ public class PlayerAvatar : NetworkBehaviour
         m_inputActions.Add("WeponChange", m_weaponChangeAction);
         m_moveTypeChangeAction = InputSystem.actions.FindAction("MoveTypeChange");
         m_inputActions.Add("MoveTypeChange", m_moveTypeChangeAction);
+        m_adsChange = InputSystem.actions.FindAction("ADSChange");
+        m_inputActions.Add("ADSChange", m_adsChange);
 
         // ↓これはInputSystemのアクションマップを使用しない場合の例
         // 直接コードでアクションを書くときはこうなる
@@ -344,6 +347,11 @@ public class PlayerAvatar : NetworkBehaviour
                 // 問題ないとき
                 m_playerLoadout.m_currentWeaponNum = changeNum;
             }
+        }
+
+        if(0.5f < m_adsChange.ReadValue<float>())
+        {
+            Debug.Log("トリガーが押された");
         }
 
         // カメラ追従処理の更新

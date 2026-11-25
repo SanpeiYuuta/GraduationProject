@@ -7,13 +7,13 @@ using UnityEngine;
 public abstract class StateBase
 {
     // 親オブジェクト
-    protected NetworkObject m_parentObject;
+    protected GameObject m_parentObject;
 
     // デルタタイム 
     protected float m_deltaTime;
 
     // コンストラクタ
-    public StateBase(NetworkObject parentObject)
+    public StateBase(GameObject parentObject)
     {
         m_parentObject = parentObject;
     }
@@ -27,7 +27,7 @@ public abstract class StateBase
     // Update is called once per frame
     public virtual void OnUpdate()
     {
-        m_deltaTime = m_parentObject.Runner.DeltaTime;
+        m_deltaTime = Time.deltaTime;
     }
 
     public virtual void OnExit()

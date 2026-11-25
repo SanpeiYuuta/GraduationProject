@@ -1,7 +1,5 @@
-using Fusion;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.XR;
 /// <summary>
 /// 攻撃の状態を管理する基底クラス(ステートマシン)
 /// </summary>
@@ -9,7 +7,7 @@ using UnityEngine.XR;
 public class StateMachineBase
 {
     // 親オブジェクト
-    protected NetworkObject m_parentObject;
+    protected GameObject m_parentObject;
 
     // ステート管理配列
     protected Dictionary<string, StateBase> m_stateTypes = new Dictionary<string, StateBase>();
@@ -18,7 +16,7 @@ public class StateMachineBase
     protected StateBase m_beforState; // 前のステート
 
     // コンストラクタ
-    public StateMachineBase(NetworkObject parentObject)
+    public StateMachineBase(GameObject parentObject)
     {
         m_parentObject = parentObject;
     }
